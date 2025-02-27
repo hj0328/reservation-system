@@ -8,7 +8,6 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Getter @Setter @ToString
 public class InMemoryProductDto implements Serializable, Comparable<InMemoryProductDto> {
@@ -50,17 +49,17 @@ public class InMemoryProductDto implements Serializable, Comparable<InMemoryProd
 
     @Override
     public int compareTo(InMemoryProductDto o) {
-        // 동일 객체
-        boolean isEqual = Objects.equals(productId, o.productId);
-        if (isEqual) {
-            return 0;
+        // 먼저 productId로 비교 (null 체크도 필요)
+        if (this.productId != null && o.productId != null) {
+            int cmp = this.productId.compareTo(o.productId);
+            if (cmp != 0) {
+                return cmp;
+            }
         }
-
-        // 다른 객체, 예약 개수가 동일 -> set에 추가
-        if (this.totalReservedCount == o.getTotalReservedCount()) {
-            return 1;
+        // 만약 productId가 null이거나 동일하다면, totalReservedCount로 비교
+        if (this.totalReservedCount != null && o.totalReservedCount != null) {
+            return this.totalReservedCount.compareTo(o.totalReservedCount);
         }
-        // 다른 객체, 예약 개수가 다름 -> 정렬하여 set에 추가
-        return - this.totalReservedCount + o.getTotalReservedCount();
+        return 0;
     }
 }
