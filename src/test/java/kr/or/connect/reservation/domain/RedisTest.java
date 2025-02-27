@@ -2,18 +2,24 @@ package kr.or.connect.reservation.domain;
 
 import kr.or.connect.reservation.domain.product.InMemoryProductDto;
 import kr.or.connect.reservation.domain.product.RedisPopularProduct;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.redisson.api.RBucket;
 import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @SpringBootTest
 public class RedisTest {
 
@@ -41,7 +47,7 @@ public class RedisTest {
         // then
         InMemoryProductDto inMemoryProductDto1 = bucket.get();
         System.out.println(inMemoryProductDto1.getTitle());
-        Assertions.assertThat("testTitle").isEqualTo(inMemoryProductDto1.getTitle());
+        assertThat("testTitle").isEqualTo(inMemoryProductDto1.getTitle());
     }
 
     @Test
@@ -73,11 +79,10 @@ public class RedisTest {
         // then
         RSortedSet<InMemoryProductDto> retBucket = redissonClient.getSortedSet("testSortTedSet");
 
-        retBucket.iterator().forEachRemaining(v -> System.out.println(v.getTotalReservedCount()));
-
-        ArrayList<Integer> list = new ArrayList<>();
-        retBucket.iterator().forEachRemaining(v -> list.add(v.getTotalReservedCount()));
-        Assertions.assertThat(list).isEqualTo(List.of(3, 2, 1));
+        List<Integer> collect = retBucket.stream()
+                .map(v -> v.getTotalReservedCount())
+                .collect(Collectors.toList());
+        assertThat(collect).containsExactly(1, 2, 3);
     }
 
     @Test
@@ -114,9 +119,8 @@ public class RedisTest {
                 .build();
         testSortTedSet.add(inMemoryProductDto3);
 
-
         // then
         RSortedSet<InMemoryProductDto> result = redissonClient.getSortedSet("testSortTedSetUpdate");
-        Assertions.assertThat(result.contains(inMemoryProductDto3));
+        assertThat(result.contains(inMemoryProductDto3));
     }
 }
