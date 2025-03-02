@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="네이버 예약, 네이버 예약이 연동된 곳 어디서나 바로 예약하고, 네이버 예약 홈(나의예약)에서 모두 관리할 수 있습니다.">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <script defer th:src="@{/js/main.js}"></script>
+    <script defer th:src="@{/js/common.js}"></script>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <title>네이버 예약</title>
+</head>
+<body>
+<div id="container">
+    <!-- Header -->
+    <div class="header">
+        <header class="header_tit">
+            <h1 class="logo">
+                <a href="/" class="lnk_logo" title="네이버">
+                    <span class="spr_bi ico_n_logo">네이버</span>
+                </a>
+                <a href="/" class="lnk_logo" title="예약">
+                    <span class="spr_bi ico_bk_logo">예약</span>
+                </a>
+            </h1>
+            <!-- 로그인 여부 확인 -->
+            <a th:if="${reservationEmail == null}" href="/booking-login" class="btn_my">
+                <span class="viewReservation" title="예약확인">예약확인</span>
+            </a>
+            <a th:if="${reservationEmail != null}" href="/my-reservation" class="btn_my">
+                <span class="viewReservation" th:title="${reservationEmail}" th:text="${reservationEmail}"></span>
+            </a>
+        </header>
+    </div>
+    <hr>
+
+    <!-- 카테고리 탭 -->
+    <div class="section_event_tab">
+        <ul class="event_tab_lst tab_lst_min" id="categoryTabs">
+            <li class="item active" data-category="0">
+                <a class="anchor"><span>전체리스트</span></a>
+            </li>
+            <li class="item" data-category="1">
+                <a class="anchor"><span>전시</span></a>
+            </li>
+            <li class="item" data-category="2">
+                <a class="anchor"><span>뮤지컬</span></a>
+            </li>
+            <li class="item" data-category="3">
+                <a class="anchor"><span>콘서트</span></a>
+            </li>
+            <li class="item" data-category="4">
+                <a class="anchor"><span>클래식</span></a>
+            </li>
+            <li class="item" data-category="5">
+                <a class="anchor"><span>연극</span></a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 제품 목록 영역 -->
+    <div class="section_event_lst">
+        <p class="event_lst_txt">
+            전체 제품 수: <span class="pink" id="totalCount">0</span>
+        </p>
+        <div class="wrap_event_box">
+            <ul class="lst_event_box" id="productList">
+                <!-- AJAX로 동적으로 추가됨 -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer">
+        <p class="dsc_footer">
+            네이버(주)는 통신판매의 당사자가 아니며, 상품의 정보, 거래조건, 이용 및 환불 등과 관련한 의무와 책임은 각 회원에게 있습니다.
+        </p>
+        <span class="copyright">© NAVER Corp.</span>
+    </div>
+</footer>
+
+</body>
+</html>
