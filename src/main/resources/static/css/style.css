@@ -3823,3 +3823,128 @@ button {
   top: 0;
   font-size: 10px;
 }
+
+/* 카테고리 탭 수평 정렬 및 스타일 */
+
+.event_tab_lst {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    gap: 10px; /* 버튼 사이 간격 */
+}
+
+.event_tab_lst .item {
+    display: inline-block;
+}
+
+.event_tab_lst .item a {
+    display: block;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.event_tab_lst .item a:hover,
+.event_tab_lst .item.active a {
+    background-color: #0078ff;
+    color: #fff;
+}
+/* ========== 🟦 카테고리 버튼 스타일 수정 🟦 ========== */
+.section_event_tab {
+    text-align: center;
+    margin-top: 60px; /* 상단바와 겹치지 않도록 여백 추가 */
+    margin-bottom: 20px;
+    padding-top: 10px;
+}
+
+.event_tab_lst {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    gap: 10px; /* 버튼 사이 간격 */
+}
+
+.event_tab_lst .item {
+    display: inline-block;
+}
+
+.event_tab_lst .item a {
+    display: block;
+    padding: 12px 18px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.event_tab_lst .item a:hover,
+.event_tab_lst .item.active a {
+    background-color: #0078ff;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* ========== 🟩 제품 리스트 스타일 🟩 ========== */
+.wrap_event_box {
+    display: flex;
+    justify-content: center;
+}
+
+.lst_event_box {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 한 줄에 2개씩 배치 */
+    gap: 20px; /* 아이템 사이 간격 */
+    max-width: 800px; /* 최대 너비 제한 */
+    width: 100%;
+    padding: 20px;
+}
+
+/* 개별 제품 아이템 스타일 */
+.lst_event_box .item {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.lst_event_box .item:hover {
+    transform: translateY(-5px);
+}
+
+/* 제품 내부 텍스트 스타일 */
+.event_txt {
+    text-align: center;
+}
+
+.event_txt h4 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.event_txt p {
+    font-size: 14px;
+    color: #666;
+    margin: 3px 0;
+}
+
+/* ========== 🟠 반응형 처리 (작은 화면에서 1개씩) 🟠 ========== */
+@media (max-width: 600px) {
+    .lst_event_box {
+        grid-template-columns: repeat(1, 1fr); /* 모바일에서는 1개씩 배치 */
+    }
+}
