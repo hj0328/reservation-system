@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -32,9 +30,6 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductPrice> productPriceList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductSeatSchedule> productSeatScheduleList = new ArrayList<>();
-
     private String title;
     private String description;
 
@@ -45,13 +40,11 @@ public class Product extends BaseEntity {
     @Min(value = 60, message = "관람시간은 최소 60분 이상입니다.")
     private Integer runningTime;
 
-    public Product(Long id, Category category, List<ProductPrice> productPriceList,
-                   List<ProductSeatSchedule> productSeatScheduleList, String title,
+    public Product(Long id, Category category, List<ProductPrice> productPriceList, String title,
                    String description, LocalDate releaseDate, Integer runningTime) {
         this.id = id;
         this.category = category;
         this.productPriceList = productPriceList;
-        this.productSeatScheduleList = productSeatScheduleList;
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
@@ -60,24 +53,11 @@ public class Product extends BaseEntity {
 
     public static Product create(String title, String description
             , LocalDate releaseDate, Integer runningTime) {
-        return new Product(null, null, null, null, title, description, releaseDate, runningTime);
+        return new Product(null, null, null, title, description, releaseDate, runningTime);
     }
 
     public void registerCategory(Category category) {
         this.category = category;
-    }
-
-    public void addProductSeatSchedule(ProductSeatSchedule productSeatSchedule) {
-        if(!productSeatScheduleList.contains(productSeatSchedule)){
-            this.productSeatScheduleList.add(productSeatSchedule);
-        }
-        productSeatSchedule.resetProduct(this);
-    }
-
-    public List<ProductSeatSchedule> findAvailabeScheduleList() {
-        return productSeatScheduleList.stream()
-                .filter(schedule -> schedule.getEventDateTime().isAfter(LocalDateTime.now()))
-                .collect(Collectors.toList());
     }
 
     public void updateProduct(ProductRequest productRequest) {
@@ -85,5 +65,9 @@ public class Product extends BaseEntity {
         this.releaseDate = productRequest.getReleaseDate();
         this.runningTime = productRequest.getRunningTime();
         this.description = productRequest.getDescription();
+    }
+
+    public void registerPrices(List<ProductPrice> priceList) {
+        this.productPriceList = priceList;
     }
 }

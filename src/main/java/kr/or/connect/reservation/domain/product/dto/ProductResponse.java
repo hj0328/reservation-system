@@ -10,24 +10,27 @@ public class ProductResponse {
 	private Long productId;
 	private String title;
 	private String description;
+	private String category;
 	private LocalDate releaseDate;
 	private Integer runningTime;
 
 	private ProductResponse(Long productId, String title, String description,
-						   LocalDate releaseDate, Integer runningTime) {
+						   LocalDate releaseDate, Integer runningTime, String category) {
 		this.productId = productId;
 		this.title = title;
 		this.description = description;
 		this.releaseDate = releaseDate;
 		this.runningTime = runningTime;
+		this.category = category;
 	}
 
 	public static ProductResponse of(Product product) {
-		return  new ProductResponse(
+		return new ProductResponse(
 				product.getId(),
 				product.getTitle(),
 				product.getDescription(),
 				product.getReleaseDate(),
-				product.getRunningTime());
+				product.getRunningTime(),
+				product.getCategory().getName().name());
 	}
 }

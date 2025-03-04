@@ -83,44 +83,36 @@ public class ProductService {
 	public ProductResponse addNewProduct(ProductRegisterRequest request) {
 		Category category = categoryRepository.getReferenceById(request.getCategoryId());
 
-		Product product = request.toProduct();
-		product.registerCategory(category);
-		Product saveProduct = productRepository.save(product);
-
-		List<ProductPrice> savedPriceList = request.getPriceList().stream()
-				.map(v -> v.toProductPrice(saveProduct))
+		Product product = Product.create(request.getTitle(), request.getDescription(), request.getReleaseDate(), request.getRunningTime());
+		List<ProductPrice> priceList = request.getPriceList().stream()
+				.map(v -> v.toProductPrice(product))
 				.collect(Collectors.toList());
+		product.registerPrices(priceList);
+		product.registerCategory(category);
 
-		List<ProductPrice> productPrices = productPriceRepository.saveAll(savedPriceList);
+		// Productprice entity 저장
+		for (ProductPrice productPrice : priceList) {
+			productPriceRepository.save(productPrice);
+		}
 
+		// product entity 저장
+		Product saveProduct = productRepository.save(product);
 		return ProductResponse.of(saveProduct);
 	}
 
 	@Transactional
-	public ProductSeatScheduleResponse addProductSeatSchedule(Long productId, ProductSeatScheduleRequest request) {
-		ProductSeatSchedule requestSchedule = request.toProductSeatSchedule();
+	public ProductSeatScheduleResponse addProductSeatSchedule(ProductSeatScheduleRequest request) {
+		ProductSeatSchedule requestSchedule = ProductSeatSchedule.from(request);
 
-		registerScheduleToProduct(productId, requestSchedule);
-
+		Product product = productRepository.findById(request.getProductId())
+				.orElseThrow(() -> new CustomException(CustomExceptionStatus.PRODUCT_NOT_FOUND));
 		Place place = placeRepository.findById(request.getPlaceId())
 				.orElseThrow(() -> new CustomException(CustomExceptionStatus.PLACE_NOT_FOUND));
 
-		requestSchedule.updatePlace(place);
+		requestSchedule.registerPlace(place);
 		ProductSeatSchedule saveProductSeatSchedule = productSeatScheduleRepository.save(requestSchedule);
 
 		return ProductSeatScheduleResponse.of(saveProductSeatSchedule, place);
-	}
-
-	private void registerScheduleToProduct(Long productId, ProductSeatSchedule requestSchedule) {
-		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new CustomException(CustomExceptionStatus.PRODUCT_NOT_FOUND));
-
-		List<ProductSeatSchedule> scheduleList = product.getProductSeatScheduleList();
-		if (scheduleList.stream()
-				.anyMatch(v -> v.equals(requestSchedule))) {
-			throw new CustomException(CustomExceptionStatus.DUPLICATE_PRODUCT_SCHEDULE);
-		}
-		product.addProductSeatSchedule(requestSchedule);
 	}
 
 	public List<ProductResponse> searchProductByTitle(String title) {

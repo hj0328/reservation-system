@@ -1,39 +1,66 @@
 package kr.or.connect.reservation.domain.reservation;
 
-import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
+import kr.or.connect.reservation.domain.member.dao.MemberRepository;
+import kr.or.connect.reservation.domain.product.dao.*;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import kr.or.connect.reservation.domain.product.entity.SeatType;
+import kr.or.connect.reservation.domain.reservation.dao.ReservationPriceRepository;
+import kr.or.connect.reservation.domain.reservation.dao.ReservationRepository;
 import kr.or.connect.reservation.domain.reservation.dto.NewReservationRequest;
 import kr.or.connect.reservation.domain.reservation.dto.ReservationPriceDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Sql(scripts = {"classpath:data/data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 class ReservationServiceBootTest {
 
     @Autowired
-    ProductSeatScheduleRepository productSeatScheduleRepository;
-
+    private ProductPriceRepository productPriceRepository;
     @Autowired
-    ReservationService reservationService;
+    private ProductRepository productRepository;
+    @Autowired
+    private PlaceRepository placeRepository;
+    @Autowired
+    private ProductSeatScheduleRepository productSeatScheduleRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private ReservationPriceRepository reservationPriceRepository;
+    @Autowired
+    private ReservationService reservationService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
-    public void createReservation () throws Exception {
+    public void 예약_100개_동시_처리() throws Exception {
         // given
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
 
-        List<NewReservationRequest> list = new ArrayList<>();
+        Queue<NewReservationRequest> queue = new ConcurrentLinkedQueue<>();
         for (int i = 1; i <= threadCount; i++) {
             ReservationPriceDto price = ReservationPriceDto.builder()
                     .productSeatScheduleId(1L)
@@ -51,7 +78,7 @@ class ReservationServiceBootTest {
                     .reservationPriceDtos(list1)
                     .build();
 
-            list.add(reservationRequest);
+            queue.add(reservationRequest);
         }
 
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -60,8 +87,10 @@ class ReservationServiceBootTest {
         for (int i = 1; i <= threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    NewReservationRequest req = list.remove(0);
-                    reservationService.createReservation(req);
+                    NewReservationRequest req = queue.poll();
+                    if (req != null) {
+                        reservationService.createReservation(req);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -70,7 +99,7 @@ class ReservationServiceBootTest {
             });
         }
         latch.await();
-
+        executorService.shutdown();
 
         // then
         ProductSeatSchedule ret = productSeatScheduleRepository.findById(1L).get();

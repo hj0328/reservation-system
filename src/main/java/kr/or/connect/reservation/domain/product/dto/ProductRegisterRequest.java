@@ -1,6 +1,5 @@
 package kr.or.connect.reservation.domain.product.dto;
 
-import kr.or.connect.reservation.domain.product.entity.Product;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -35,12 +34,4 @@ public class ProductRegisterRequest {
         this.runningTime = runningTime;
         this.priceList = priceList;
     }
-
-    public Product toProduct() {
-        return Product.create(getTitle(),
-                getDescription(),
-                getReleaseDate(),
-                getRunningTime());
-    }
-
 }
