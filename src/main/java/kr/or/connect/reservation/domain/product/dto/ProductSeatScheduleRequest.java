@@ -1,6 +1,5 @@
 package kr.or.connect.reservation.domain.product.dto;
 
-import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,6 +8,8 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ProductSeatScheduleRequest {
+    @NotNull
+    private Long productId;
     @NotNull
     private Long placeId;
     @NotNull
@@ -21,10 +22,5 @@ public class ProductSeatScheduleRequest {
         this.placeId = placeId;
         this.eventDateTime = eventDateTime;
         this.seatType = seatType;
-    }
-
-    public ProductSeatSchedule toProductSeatSchedule() {
-        return ProductSeatSchedule.create(null, null,
-                eventDateTime, 0, seatType);
     }
 }

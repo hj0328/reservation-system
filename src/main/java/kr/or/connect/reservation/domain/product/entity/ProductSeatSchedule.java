@@ -3,6 +3,7 @@ package kr.or.connect.reservation.domain.product.entity;
 import kr.or.connect.reservation.config.exception.CustomException;
 import kr.or.connect.reservation.config.exception.CustomExceptionStatus;
 import kr.or.connect.reservation.domain.BaseEntity;
+import kr.or.connect.reservation.domain.product.dto.ProductSeatScheduleRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,15 +53,12 @@ public class ProductSeatSchedule extends BaseEntity {
         this.seatType = seatType;
     }
 
-    public void resetProduct(Product product) {
-        // 양방향 연관관계 때문에 기존 product가 있다면 관계 제거
-        if (this.product != null) {
-            this.product.getProductSeatScheduleList().remove(this);
-        }
-        this.product = product;
+    public static ProductSeatSchedule from(ProductSeatScheduleRequest request) {
+        return ProductSeatSchedule.create(null, null,
+                request.getEventDateTime(), 0, request.getSeatType());
     }
 
-    public void updatePlace(Place place) {
+    public void registerPlace(Place place) {
         // 단반향 연관관계 때문에 place에서 연관관계 제거하지 않아도 됨
         this.place = place;
     }

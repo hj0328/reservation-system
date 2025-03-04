@@ -96,13 +96,12 @@ public class ProductController {
 	 */
 	@PostMapping("/{productId}/schedule")
 	public ResponseEntity<ProductSeatScheduleResponse> registerProductQuantitySchedule(
-			@PathVariable Long productId,
 			@Valid @RequestBody ProductSeatScheduleRequest request
 	) {
 
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
-				.body(productService.addProductSeatSchedule(productId, request));
+				.body(productService.addProductSeatSchedule(request));
 	}
 
 	/**
