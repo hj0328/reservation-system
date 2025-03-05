@@ -1,24 +1,19 @@
 package kr.or.connect.reservation.domain;
 
 import kr.or.connect.reservation.domain.product.InMemoryProductDto;
-import kr.or.connect.reservation.domain.product.RedisPopularProduct;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.redisson.api.RBucket;
 import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @SpringBootTest
 public class RedisTest {
@@ -26,14 +21,8 @@ public class RedisTest {
     @Autowired
     private RedissonClient redissonClient;
 
-    @Autowired
-    private RedisPopularProduct redisInitializer;
-
-    @Autowired
-    private ApplicationContext context;
-
     @Test
-    public void redisSaveTest () throws Exception {
+    public void 임베디드_레디스_저장 () throws Exception {
         // given
         RBucket<InMemoryProductDto> bucket = redissonClient.getBucket("redis-test");
 
@@ -51,7 +40,7 @@ public class RedisTest {
     }
 
     @Test
-    public void listSave () throws Exception {
+    public void 임베디드_레디스_조회 () throws Exception {
         // given
         RSortedSet<InMemoryProductDto> testSortTedSet = redissonClient.getSortedSet("testSortTedSet");
         testSortTedSet.clear();
@@ -86,7 +75,7 @@ public class RedisTest {
     }
 
     @Test
-    public void updateRedis () throws Exception {
+    public void 임베디드_레디스_수정 () throws Exception {
         // given
         RSortedSet<InMemoryProductDto> testSortTedSet = redissonClient.getSortedSet("testSortTedSetUpdate");
         testSortTedSet.clear();
