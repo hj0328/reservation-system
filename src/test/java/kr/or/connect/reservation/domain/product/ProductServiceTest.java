@@ -43,7 +43,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Test
-    void 모든_카테고리의_Product_조회() {
+    void 모든_카테고리의_상품_조회() {
         // given
         List<Product> products = new ArrayList<>();
 
@@ -78,7 +78,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void 특정_카테고리의_Product_조회() {
+    void 특정_카테고리의_상품_조회() {
         // given
         List<Product> products = new ArrayList<>();
 
