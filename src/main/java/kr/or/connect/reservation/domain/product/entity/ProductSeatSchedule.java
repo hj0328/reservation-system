@@ -101,5 +101,9 @@ public class ProductSeatSchedule extends BaseEntity {
     public void minusQuantity(Integer reservedQuantity) {
         this.reservedQuantity -= reservedQuantity;
     }
+
+    public void targetProduct(Product product) {
+        this.product = product;
+    }
 }
 

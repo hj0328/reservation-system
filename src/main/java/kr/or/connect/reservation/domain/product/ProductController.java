@@ -42,7 +42,7 @@ public class ProductController {
 
 	/**
 	 * 실시간 예매 인기 순위
-	 * 현재 가장 많이 예매한 순위 상위 10개 조회
+	 * 현재 가장 많이 예매한 순위 상위 20개 조회
 	 */
 	@GetMapping("/popular-products")
 	public List<PopularProductResponse> getRealTimePopularProduct(

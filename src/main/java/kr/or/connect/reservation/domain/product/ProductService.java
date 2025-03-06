@@ -109,6 +109,7 @@ public class ProductService {
 		Place place = placeRepository.findById(request.getPlaceId())
 				.orElseThrow(() -> new CustomException(CustomExceptionStatus.PLACE_NOT_FOUND));
 
+		requestSchedule.targetProduct(product);
 		requestSchedule.registerPlace(place);
 		ProductSeatSchedule saveProductSeatSchedule = productSeatScheduleRepository.save(requestSchedule);
 
