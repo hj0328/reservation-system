@@ -4,6 +4,7 @@ import kr.or.connect.reservation.config.exception.CustomException;
 import kr.or.connect.reservation.config.exception.CustomExceptionStatus;
 import kr.or.connect.reservation.domain.member.dao.MemberRepository;
 import kr.or.connect.reservation.domain.member.entity.Member;
+import kr.or.connect.reservation.domain.product.InMemoryPopularProduct;
 import kr.or.connect.reservation.domain.product.InMemoryProductDto;
 import kr.or.connect.reservation.domain.product.RedisPopularProduct;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
@@ -40,7 +41,7 @@ public class ReservationService {
 	private final ProductSeatScheduleRepository productSeatScheduleRepository;
 	private final MemberRepository memberRepository;
 
-//	private final InMemoryPopularProduct inMemoryPopularProduct;
+	private final InMemoryPopularProduct inMemoryPopularProduct;
 	private final RedisPopularProduct redisPopularProduct;
 
 	@Transactional
@@ -174,7 +175,7 @@ public class ReservationService {
 				.description(product.getDescription())
 				.releaseDate(product.getReleaseDate())
 				.totalReservedCount(totalReservedQuantity).build();
-		redisPopularProduct.reserve(saveProductDto);
+		inMemoryPopularProduct.reserve(saveProductDto);
 //		inMemoryPopularProduct.reserve(saveProductDto);
 	}
 
@@ -187,7 +188,7 @@ public class ReservationService {
 				.description(product.getDescription())
 				.releaseDate(product.getReleaseDate())
 				.totalReservedCount(totalReservedQuantity).build();
-		redisPopularProduct.cancel(cancelProductDto);
+		inMemoryPopularProduct.cancel(cancelProductDto);
 		// inMemoryPopularProduct.cancel(cancelProductDto);
 	}
 }

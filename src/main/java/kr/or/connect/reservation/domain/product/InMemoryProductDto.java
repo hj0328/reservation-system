@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter @Setter @ToString
 public class InMemoryProductDto implements Serializable, Comparable<InMemoryProductDto> {
@@ -61,5 +62,18 @@ public class InMemoryProductDto implements Serializable, Comparable<InMemoryProd
             return this.totalReservedCount.compareTo(o.totalReservedCount);
         }
         return 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InMemoryProductDto that = (InMemoryProductDto) o;
+        return Objects.equals(productId, that.productId);
     }
 }

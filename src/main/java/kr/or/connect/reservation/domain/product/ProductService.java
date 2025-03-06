@@ -161,8 +161,13 @@ public class ProductService {
 		return ProductSeatScheduleResponse.of(seatSchedule, place);
 	}
 
+	/**
+	 * DB(local cache, redis 등 적용) 에서 인기 데이터 조회
+	 * @param startPage
+	 * @return
+	 */
 	public List<PopularProductResponse> getRealTimePopularProduct(Integer startPage) {
-		List<InMemoryProductDto> inMemoryProductDto = redisPopularProduct.getInMemoryProductDto();
+		List<InMemoryProductDto> inMemoryProductDto = redisPopularProduct.getProductDtos();
 
 		int offset = startPage * PRODUCT_PAGE_SIZE;
 		int limit = PRODUCT_PAGE_SIZE;
@@ -182,7 +187,7 @@ public class ProductService {
 				.map(PopularProductResponse::of)
 				.collect(Collectors.toList());
 
-//		local thread 코드
+//		local cahe 코드
 //		if (inMemoryPopularProduct.isEmpty()) {
 //			log.info("get popular product from DB");
 //
