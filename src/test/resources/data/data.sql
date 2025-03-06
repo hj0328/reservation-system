@@ -1,3 +1,5 @@
+-- 테스트 중 때때로 insert 순서가 바뀌어 실행되는 현상으로 외래키 제약조건 임시 비활성화
+SET FOREIGN_KEY_CHECKS = 0;
 
 insert into category (name) values ('MOVIE');
 insert into category (name) values ('CLASSIC');
@@ -3145,3 +3147,4 @@ insert into product_price (created_at, update_at, price, seat_type, product_id) 
 
 
 
+SET FOREIGN_KEY_CHECKS = 1;
