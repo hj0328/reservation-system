@@ -174,6 +174,7 @@ public class ReservationService {
 				.runningTime(product.getRunningTime())
 				.description(product.getDescription())
 				.releaseDate(product.getReleaseDate())
+				.categoryName(product.getCategory().getName().name())
 				.totalReservedCount(totalReservedQuantity).build();
 		inMemoryPopularProduct.reserve(saveProductDto);
 //		inMemoryPopularProduct.reserve(saveProductDto);
@@ -187,6 +188,7 @@ public class ReservationService {
 				.runningTime(product.getRunningTime())
 				.description(product.getDescription())
 				.releaseDate(product.getReleaseDate())
+				.categoryName(product.getCategory().getName().name())
 				.totalReservedCount(totalReservedQuantity).build();
 		inMemoryPopularProduct.cancel(cancelProductDto);
 		// inMemoryPopularProduct.cancel(cancelProductDto);
