@@ -4,10 +4,12 @@ import kr.or.connect.reservation.domain.product.InMemoryProductDto;
 import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Getter
+@ToString
 public class PopularProductResponse {
     private Long productId;
     private String title;
@@ -15,15 +17,17 @@ public class PopularProductResponse {
     private LocalDate releaseDate;
     private Integer runningTime;
     private Integer totalReservationQuantity;
+    private String category;
 
     @Builder
-    public PopularProductResponse(Long productId, String title, String description, LocalDate releaseDate, Integer runningTime, Integer totalReservationQuantity) {
+    public PopularProductResponse(Long productId, String title, String description, LocalDate releaseDate, Integer runningTime, Integer totalReservationQuantity, String categoryName) {
         this.productId = productId;
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
         this.runningTime = runningTime;
         this.totalReservationQuantity = totalReservationQuantity;
+        this.category = categoryName;
     }
 
     public static PopularProductResponse of(InMemoryProductDto inMemoryProductDto) {
@@ -34,6 +38,7 @@ public class PopularProductResponse {
                 .releaseDate(inMemoryProductDto.getReleaseDate())
                 .runningTime(inMemoryProductDto.getRunningTime())
                 .totalReservationQuantity(inMemoryProductDto.getTotalReservedCount())
+                .categoryName(inMemoryProductDto.getCategoryName())
                 .build();
     }
 
@@ -45,6 +50,7 @@ public class PopularProductResponse {
                 .releaseDate(popularProductDto.getReleaseDate())
                 .runningTime(popularProductDto.getRunningTime())
                 .totalReservationQuantity(popularProductDto.getTotalReservedCount())
+                .categoryName(popularProductDto.getCategoryName())
                 .build();
     }
 }

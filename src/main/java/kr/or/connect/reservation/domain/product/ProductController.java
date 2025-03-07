@@ -41,16 +41,43 @@ public class ProductController {
 	}
 
 	/**
-	 * 실시간 예매 인기 순위
+	 * 예매 인기 순위
 	 * 현재 가장 많이 예매한 순위 상위 20개 조회
+	 * categoryId가 주어지면 해당 카테고리에 대한 인기 순위 가져온다.
 	 */
-	@GetMapping("/popular-products")
+	@GetMapping("/popular-products/db")
 	public List<PopularProductResponse> getRealTimePopularProduct(
+			@RequestParam(required = false, defaultValue = "0") Long categoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer startPage
 	) {
-		return productService.getRealTimePopularProduct(startPage);
+		return productService.getRealTimePopularProduct(startPage, categoryId);
 	}
 
+	/**
+	 * local cache 예매 인기 순위
+	 * 현재 가장 많이 예매한 순위 상위 20개 조회
+	 * categoryId가 주어지면 해당 카테고리에 대한 인기 순위 가져온다.
+	 */
+	@GetMapping("/popular-products/local-cache")
+	public List<PopularProductResponse> getRealTimePopularProductLocalCache (
+			@RequestParam(required = false, defaultValue = "0") Long categoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer startPage
+	) {
+		return productService.getRealTimePopularProductLocalCache(startPage, categoryId);
+	}
+
+	/**
+	 * redis 예매 인기 순위
+	 * 현재 가장 많이 예매한 순위 상위 20개 조회
+	 * categoryId가 주어지면 해당 카테고리에 대한 인기 순위 가져온다.
+	 */
+	@GetMapping("/popular-products/redis")
+	public List<PopularProductResponse> getRealTimePopularProductRedis(
+			@RequestParam(required = false, defaultValue = "0") Long categoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer startPage
+	) {
+		return productService.getRealTimePopularProductRedis(startPage, categoryId);
+	}
 
 	/**
 	 * product schedule (시간, 남은 좌석) 정보 조회
@@ -121,14 +148,17 @@ public class ProductController {
 
 	/**
 	 * product 검색
-	 * 모든 product를 조회하는 것을 대신하여 최대 100개까지만 검색하도록 제한
+	 * categoryId에 해당하는 모든 product를 최대 20개까지 검색
+	 * produdctId가 주어지면 해당 productId부터 20개를 검색
 	 */
 	@GetMapping("/search")
-	public ResponseEntity<List<ProductResponse>> searchProduct(
-			@RequestParam String title) {
+	public ResponseEntity<List<ProductResponse>> searchProducts (
+			@RequestParam String title,
+			@RequestParam(required = false, defaultValue = "0") Long categoryId,
+			@RequestParam(required = false, defaultValue = "0") Long productId) {
 
 		return ResponseEntity.ok(
-				productService.searchProductByTitle(title)
+				productService.searchProductByTitle(title, productId, categoryId)
 		);
 	}
 

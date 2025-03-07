@@ -1,6 +1,6 @@
 package kr.or.connect.reservation.domain.product;
 
-import kr.or.connect.reservation.domain.product.dao.CategoryRepository;
+import kr.or.connect.reservation.domain.category.CategoryRepository;
 import kr.or.connect.reservation.domain.product.dao.PlaceRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
@@ -48,15 +48,15 @@ class ProductServiceTest {
         List<Product> products = new ArrayList<>();
 
         Product product1 = Product.create("t1", "desc", LocalDate.now(), 120);
-        product1.registerCategory(Category.createCategory(CategoryType.CLASSIC.name()));
+        product1.registerCategory(Category.createCategory(CategoryType.CLASSIC));
         products.add(product1);
 
         Product product2 = Product.create("t1", "desc", LocalDate.now(), 120);
-        product2.registerCategory(Category.createCategory(CategoryType.MOVIE.name()));
+        product2.registerCategory(Category.createCategory(CategoryType.MOVIE));
         products.add(product2);
 
         Product product3 = Product.create("t1", "desc", LocalDate.now(), 120);
-        product3.registerCategory(Category.createCategory(CategoryType.MUSICAL.name()));
+        product3.registerCategory(Category.createCategory(CategoryType.MUSICAL));
         products.add(product3);
 
         PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
@@ -83,15 +83,15 @@ class ProductServiceTest {
         List<Product> products = new ArrayList<>();
 
         Product product1 = Product.create("t1", "desc", LocalDate.now(), 120);
-        product1.registerCategory(Category.createCategory(CategoryType.CLASSIC.name()));
+        product1.registerCategory(Category.createCategory(CategoryType.CLASSIC));
         products.add(product1);
 
         Product product2 = Product.create("t1", "desc", LocalDate.now(), 120);
-        product2.registerCategory(Category.createCategory(CategoryType.CLASSIC.name()));
+        product2.registerCategory(Category.createCategory(CategoryType.CLASSIC));
         products.add(product2);
 
         Product product3 = Product.create("t1", "desc", LocalDate.now(), 120);
-        product3.registerCategory(Category.createCategory(CategoryType.CLASSIC.name()));
+        product3.registerCategory(Category.createCategory(CategoryType.CLASSIC));
         products.add(product3);
 
         PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
@@ -114,7 +114,7 @@ class ProductServiceTest {
         // given
         Product product = Product.create("T1", "desc", LocalDate.now(), 120);
 
-        product.registerCategory(Category.createCategory(CategoryType.CLASSIC.name()));
+        product.registerCategory(Category.createCategory(CategoryType.CLASSIC));
         List<ProductPrice> productPriceList = new ArrayList<>();
         productPriceList.add(
                 ProductPrice.create(null, 1000, SeatType.ALL_SAME_SEAT));

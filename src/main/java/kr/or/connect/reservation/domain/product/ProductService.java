@@ -2,7 +2,9 @@ package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.config.exception.CustomException;
 import kr.or.connect.reservation.config.exception.CustomExceptionStatus;
+import kr.or.connect.reservation.domain.category.CategoryRepository;
 import kr.or.connect.reservation.domain.product.dao.*;
+import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
 import kr.or.connect.reservation.domain.product.dto.*;
 import kr.or.connect.reservation.domain.product.entity.*;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +39,8 @@ public class ProductService {
 
 	private final InMemoryPopularProduct inMemoryPopularProduct;
 	private final RedisPopularProduct redisPopularProduct;
+
+	private final Long ALL_CATEGORY = 0L;
 
 	public List<ProductResponse> getPagedProductsByCategoryId(Long categoryId, Integer start) {
 		PageRequest pageRequest = PageRequest.of(start, PRODUCT_PAGE_SIZE
@@ -116,17 +121,21 @@ public class ProductService {
 		return ProductSeatScheduleResponse.of(saveProductSeatSchedule, place);
 	}
 
-	public List<ProductResponse> searchProductByTitle(String title) {
+	public List<ProductResponse> searchProductByTitle(String title, Long productId, Long categoryId) {
 		PageRequest pageRequest = PageRequest.
-				of(0, PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
+				of(productId.intValue(), PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
 
-		List<Product> foundProductList = productRepository
-				.findByTitleStartsWith(title, pageRequest);
+		List<Product> foundProductList;
+		if (ALL_CATEGORY.equals(categoryId)) {
+			foundProductList = productRepository
+					.findByTitleStartsWith(title, pageRequest);
+		} else {
+			foundProductList = productRepository
+					.findByTitleStartingWithAndCategoryId(title, categoryId, pageRequest);
+		}
 
 		return foundProductList.stream()
-				.sorted(Comparator.comparing(Product::getReleaseDate,
-								Comparator.reverseOrder())
-						.thenComparing(Product::getId))
+				.sorted(Comparator.comparing(Product::getId))
 				.map(ProductResponse::of)
 				.collect(Collectors.toList());
 	}
@@ -163,12 +172,51 @@ public class ProductService {
 	}
 
 	/**
-	 * DB(local cache, redis 등 적용) 에서 인기 데이터 조회
+	 * DB 에서 인기 데이터 조회
+	 *
 	 * @param startPage
+	 * @param categoryId
 	 * @return
 	 */
-	public List<PopularProductResponse> getRealTimePopularProduct(Integer startPage) {
+	public List<PopularProductResponse> getRealTimePopularProduct(Integer startPage, Long categoryId) {
+		PageRequest pageRequest = PageRequest.of(startPage, PRODUCT_PAGE_SIZE);
+		List<PopularProductDto> result;
+		if (ALL_CATEGORY.equals(categoryId)) {
+			result = productSeatScheduleRepository
+					.findPagedPopularProduct(pageRequest);
+		} else {
+			result = productSeatScheduleRepository
+					.findPopularProductByCategory(pageRequest, categoryId);
+		}
+
+		List<PopularProductDto> popularProductDtos = new ArrayList<>();
+		if (result != null) {
+			popularProductDtos = result;
+		}
+
+		return popularProductDtos.stream()
+				.map(PopularProductResponse::of)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Redis 에서 인기 데이터 조회
+	 *
+	 * @param startPage
+	 * @param categoryId
+	 * @return
+	 */
+	public List<PopularProductResponse> getRealTimePopularProductRedis(Integer startPage, Long categoryId) {
+		// redis는 기동 시 warm up 된 상태
 		List<InMemoryProductDto> inMemoryProductDto = redisPopularProduct.getProductDtos();
+
+		if (!ALL_CATEGORY.equals(categoryId)) {
+			Category category = categoryRepository.findById(categoryId)
+					.orElseThrow(() -> new CustomException(CustomExceptionStatus.CATEGORY_NOT_FOUND));
+			inMemoryProductDto = inMemoryProductDto.stream()
+					.filter(v -> v.getCategoryName().equals(category.getName().name()))
+					.collect(Collectors.toList());
+		}
 
 		int offset = startPage * PRODUCT_PAGE_SIZE;
 		int limit = PRODUCT_PAGE_SIZE;
@@ -187,21 +235,32 @@ public class ProductService {
 		return inMemoryProductDto.subList(fromIndex, toIndex).stream()
 				.map(PopularProductResponse::of)
 				.collect(Collectors.toList());
+	}
 
-//		local cahe 코드
-//		if (inMemoryPopularProduct.isEmpty()) {
-//			log.info("get popular product from DB");
-//
-//			PageRequest pageRequest = PageRequest.of(startPage, PRODUCT_PAGE_SIZE);
-//			List<PopularProductDto> popularProductDtos = productSeatScheduleRepository
-//					.findPopularProductByReservation(pageRequest);
-//
-//			return popularProductDtos.stream()
-//					.map(PopularProductResponse::of)
-//					.collect(Collectors.toList());
-//		}
-//
+	// local cache 에서 조회. 없다면 db 조회 후 캐싱
+	public List<PopularProductResponse> getRealTimePopularProductLocalCache(Integer startPage, Long categoryId) {
 
-//		return inMemoryPopularProduct.getProducts(startPage, PRODUCT_PAGE_SIZE);
+		if (inMemoryPopularProduct.isEmpty()) {
+			log.info("get popular product from DB");
+
+			List<InMemoryProductDto> productInMemoryProduct = productSeatScheduleRepository.findAllPopularProductInMemoryProduct();
+			inMemoryPopularProduct.refresh(productInMemoryProduct);
+
+			if (ALL_CATEGORY.equals(categoryId)) {
+				return productInMemoryProduct.stream()
+						.map(PopularProductResponse::of)
+						.collect(Collectors.toList());
+			} else {
+				Category category = categoryRepository.findById(categoryId)
+						.orElseThrow(() -> new CustomException(CustomExceptionStatus.CATEGORY_NOT_FOUND));
+
+				return productInMemoryProduct.stream()
+						.filter(p -> p.getCategoryName().equals(category.getName().name()))
+						.map(PopularProductResponse::of)
+						.collect(Collectors.toList());
+			}
+		}
+
+		return inMemoryPopularProduct.getProducts(startPage, PRODUCT_PAGE_SIZE);
 	}
 }
