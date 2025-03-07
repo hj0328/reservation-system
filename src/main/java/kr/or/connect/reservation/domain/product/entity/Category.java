@@ -24,12 +24,12 @@ public class Category {
     @Column(nullable = false, unique = true)
     private CategoryType name;
 
-    private Category(String name) {
-        this.name = CategoryType.valueOf(name);
+    private Category(CategoryType categoryType) {
+        this.name = categoryType;
     }
 
-    public static Category createCategory(String name) {
-        return new Category(name);
+    public static Category createCategory(CategoryType categoryType) {
+        return new Category(categoryType);
     }
 
     public void updateCategory(String category) {
