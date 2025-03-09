@@ -63,3 +63,16 @@ jobs:
             --s3-location bucket=reservation-service-build-zip,bundleType=zip,key=reservation-service.zip \
             --region ap-northeast-2
           echo "Deployment started."
+
+      # 7. 배포완료 메일
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "🚀 배포 완료 알림"
+          to: "smartwork@kakao.com"
+          from: "GitHub Actions <smartwork@kakao.com>"
+          body: "배포가 성공적으로 완료되었습니다! 🎉"
