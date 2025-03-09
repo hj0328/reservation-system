@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "Deploying to CodeDeploy..."
           aws deploy create-deployment \
-            --application-name reservation-bservice \
+            --application-name reservation-service \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name reservation-service-group  \
             --s3-location bucket=reservation-service-build-zip,bundleType=zip,key=reservation-service.zip \
