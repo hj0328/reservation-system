@@ -1,6 +1,5 @@
 package kr.or.connect.reservation.config.authentication;
 
-import kr.or.connect.reservation.utils.UtilConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -15,10 +14,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute(UtilConstant.USER_ID) == null) {
-            response.sendRedirect("/");
-            return false;
-        }
+//        if (session == null || session.getAttribute(UtilConstant.MEMBER_ID) == null) {
+//            response.sendRedirect("/");
+//            return false;
+//        }
 
         return true;
     }
