@@ -1,7 +1,6 @@
 package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.domain.category.CategoryRepository;
-import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
 import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductPriceRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
@@ -20,7 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
+@SpringBootTest(classes = {RedisConfig.class})
 @Sql(scripts = {"classpath:data/truncate.sql"})
 public class ProductServiceIntegratedTest {
 
