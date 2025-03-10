@@ -1,7 +1,6 @@
 -- 테스트 중 때때로 insert 순서가 바뀌어 실행되는 현상으로 외래키 제약조건 임시 비활성화
 SET FOREIGN_KEY_CHECKS = 0;
 
-
 truncate table category;
 truncate table member;
 truncate table place;
