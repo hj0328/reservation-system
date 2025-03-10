@@ -1,4 +1,4 @@
-package kr.or.connect.reservation.domain.product.dao;
+package kr.or.connect.reservation.domain.category;
 
 import kr.or.connect.reservation.domain.product.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;

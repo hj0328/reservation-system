@@ -9,5 +9,5 @@ public interface PopularProductDto {
     LocalDate getReleaseDate();
     Integer getRunningTime();
     Integer getTotalReservedCount();
-
+    String getCategoryName();
 }

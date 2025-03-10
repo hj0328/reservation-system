@@ -1,23 +1,17 @@
 package kr.or.connect.reservation.domain.reservation;
 
-import kr.or.connect.reservation.domain.member.dao.MemberRepository;
-import kr.or.connect.reservation.domain.product.dao.*;
+import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import kr.or.connect.reservation.domain.product.entity.SeatType;
-import kr.or.connect.reservation.domain.reservation.dao.ReservationPriceRepository;
-import kr.or.connect.reservation.domain.reservation.dao.ReservationRepository;
 import kr.or.connect.reservation.domain.reservation.dto.NewReservationRequest;
 import kr.or.connect.reservation.domain.reservation.dto.ReservationPriceDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -29,30 +23,13 @@ import java.util.concurrent.Executors;
 @SpringBootTest
 @ActiveProfiles("test")
 @Sql(scripts = {"classpath:data/data.sql"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 class ReservationServiceBootTest {
 
     @Autowired
-    private ProductPriceRepository productPriceRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private PlaceRepository placeRepository;
-    @Autowired
     private ProductSeatScheduleRepository productSeatScheduleRepository;
     @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private ReservationRepository reservationRepository;
-    @Autowired
-    private ReservationPriceRepository reservationPriceRepository;
-    @Autowired
     private ReservationService reservationService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Test
     public void 예약_100개_동시_처리() throws Exception {

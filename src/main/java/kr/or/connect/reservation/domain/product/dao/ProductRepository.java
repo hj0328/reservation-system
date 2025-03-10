@@ -15,4 +15,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByTitleStartsWith(String title, Pageable pageable);
 
+    List<Product> findByTitleStartingWithAndCategoryId(String title, Long categoryId, PageRequest pageRequest);
 }

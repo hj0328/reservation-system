@@ -108,7 +108,7 @@ public class InMemoryPopularProduct {
         if (nextInMemoryProductDto == null || nextInMemoryProductDto.getTotalReservedCount() == null) {
             return true;
         }
-        if (nextInMemoryProductDto != null || updateInMemoryProduct.getTotalReservedCount() < nextInMemoryProductDto.getTotalReservedCount()) {
+        if (updateInMemoryProduct.getTotalReservedCount() < nextInMemoryProductDto.getTotalReservedCount()) {
             return true;
         }
 

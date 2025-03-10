@@ -1,0 +1,78 @@
+name: CI/CD to Amazon ECS
+
+on:
+  push:
+    branches: [ "main_2.0" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # code checkout 및 JDK 설정
+      - uses: actions/checkout@v4
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      
+      - name: Build with Maven
+        run: mvn clean install
+
+      # AWS 자격 증명 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      # 배포 전 작업, zip 파일로 압축
+      - name: Prepare files for deployment
+        run: |
+          echo "Zipping files..."
+          mkdir -p before-deploy
+          cp scripts/*.sh before-deploy/
+          cp appspec.yml before-deploy/
+          cp build/libs/*.jar before-deploy/
+          cd before-deploy && zip -r before-deploy *
+          cd ../ && mkdir -p deploy
+          mv before-deploy/before-deploy.zip deploy/reservation-service.zip
+          echo "Files prepared in 'deploy/reservation-service.zip'"
+
+      # AWS S3로 업로드
+      - name: Upload to S3
+        run: |
+          echo "Uploading to S3..."
+          aws s3 cp deploy/reservation-service.zip s3://reservation-service-build-zip/reservation-service.zip \
+            --region ap-northeast-2 \
+            --acl private
+          echo "Upload to S3 completed."
+
+      # 6. AWS CodeDeploy로 배포
+      - name: Deploy to CodeDeploy
+        run: |
+          echo "Deploying to CodeDeploy..."
+          aws deploy create-deployment \
+            --application-name reservation-service \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name reservation-service-group  \
+            --s3-location bucket=reservation-service-build-zip,bundleType=zip,key=reservation-service.zip \
+            --region ap-northeast-2
+          echo "Deployment started."
+
+      # 7. 배포완료 메일
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "🚀 배포 완료 알림"
+          to: "smartwork@kakao.com"
+          from: "GitHub Actions <smartwork@kakao.com>"
+          body: "배포가 성공적으로 완료되었습니다! 🎉"

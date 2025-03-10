@@ -18,15 +18,17 @@ public class InMemoryProductDto implements Serializable, Comparable<InMemoryProd
     private LocalDate releaseDate;
     private Integer runningTime;
     private Integer totalReservedCount;
+    private String categoryName;
 
     @Builder
-    public InMemoryProductDto(Long productId, String title, String description, LocalDate releaseDate, Integer runningTime, Integer totalReservedCount) {
+    public InMemoryProductDto(Long productId, String title, String description, LocalDate releaseDate, Integer runningTime, Integer totalReservedCount, String categoryName) {
         this.productId = productId;
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
         this.runningTime = runningTime;
         this.totalReservedCount = totalReservedCount;
+        this.categoryName = categoryName;
     }
 
     public static InMemoryProductDto of(PopularProductDto productDto) {
@@ -37,6 +39,7 @@ public class InMemoryProductDto implements Serializable, Comparable<InMemoryProd
                 .releaseDate(productDto.getReleaseDate())
                 .runningTime(productDto.getRunningTime())
                 .totalReservedCount(productDto.getTotalReservedCount())
+                .categoryName(productDto.getCategoryName())
                 .build();
     }
 
