@@ -13,10 +13,8 @@ import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,8 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @Sql(scripts = {"classpath:data/data.sql"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
-@Transactional
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 public class PopularProductScriptTest {
 
     @Autowired
@@ -87,7 +84,6 @@ public class PopularProductScriptTest {
     public void 레디스_제품_예약_반영() {
         // given
         InMemoryProductDto productDto = redisPopularProduct.getProductDtos().stream()
-                .filter(v -> v.getProductId().equals(1L))
                 .findFirst().get();
         int originalReservationCount = productDto.getTotalReservedCount();
 
@@ -97,7 +93,6 @@ public class PopularProductScriptTest {
 
         // then
         InMemoryProductDto resultProductDto = redisPopularProduct.getProductDtos().stream()
-                .filter(v -> v.getProductId().equals(1L))
                 .findFirst().get();
 
         assertThat(resultProductDto.getTotalReservedCount())
@@ -108,7 +103,6 @@ public class PopularProductScriptTest {
     public void 레디스_제품_예약_취소() {
         // given
         InMemoryProductDto productDto = redisPopularProduct.getProductDtos().stream()
-                .filter(v -> v.getProductId().equals(1L))
                 .findFirst().get();
         int originalReservationCount = productDto.getTotalReservedCount();
 
@@ -118,7 +112,6 @@ public class PopularProductScriptTest {
 
         // then
         InMemoryProductDto resultProductDto = redisPopularProduct.getProductDtos().stream()
-                .filter(v -> v.getProductId().equals(1L))
                 .findFirst().get();
 
         assertThat(resultProductDto.getTotalReservedCount())

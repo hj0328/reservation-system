@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/detail","/review","/my-reservation", "/booking-login", "/booking",
+                .excludePathPatterns("/", "/detail","/review","/my-reservation", "/booking-login", "/booking", "/profile",
                         "/api/promotions",
                         "/api/products/**", "/api/users/**",
                         "/static/css/**", "/static/font/**", "/static/htmls/**", "/static/img/**",

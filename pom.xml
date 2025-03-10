@@ -58,7 +58,7 @@
         <dependency>
             <groupId>it.ozimov</groupId>
             <artifactId>embedded-redis</artifactId>
-            <scope>test</scope>
+<!--            <scope>test</scope>-->
             <version>0.7.2</version>
         </dependency>
         <dependency>
@@ -70,6 +70,11 @@
             <artifactId>p6spy-spring-boot-starter</artifactId>
             <version>1.8.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.0.8</version>
         </dependency>
     </dependencies>
     <build>
