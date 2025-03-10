@@ -1,5 +1,7 @@
 package kr.or.connect.reservation.domain.reservation;
 
+import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
+import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import kr.or.connect.reservation.domain.product.entity.SeatType;
@@ -9,7 +11,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
@@ -20,8 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
 @Sql(scripts = {"classpath:data/data.sql"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 class ReservationServiceBootTest {

@@ -1,8 +1,8 @@
-package kr.or.connect.reservation.config;
+package kr.or.connect.reservation.domain.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import redis.embedded.RedisServer;
 
@@ -11,11 +11,8 @@ import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * redis 올리기전 기동문제로 임시로 embedded redis
- */
 @Slf4j
-@Configuration
+@TestConfiguration
 public class EmbeddedRedisConfig {
 
     @Value("${spring.data.redis.port}")

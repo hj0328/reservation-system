@@ -1,4 +1,4 @@
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS = 0;
 
 truncate table category;
 truncate table member;
@@ -9,4 +9,4 @@ truncate table product_seat_schedule;
 truncate table reservation;
 truncate table reservation_price;
 
-SET REFERENTIAL_INTEGRITY TRUE;
+SET FOREIGN_KEY_CHECKS = 1;

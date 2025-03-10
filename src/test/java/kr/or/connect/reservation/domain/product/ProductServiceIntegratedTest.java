@@ -1,6 +1,8 @@
 package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.domain.category.CategoryRepository;
+import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
+import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductPriceRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
 import kr.or.connect.reservation.domain.product.dto.ProductPriceRequest;
@@ -10,7 +12,6 @@ import kr.or.connect.reservation.domain.product.entity.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
@@ -19,8 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
 @Sql(scripts = {"classpath:data/truncate.sql"})
 public class ProductServiceIntegratedTest {
 
