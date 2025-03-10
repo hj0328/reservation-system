@@ -1,6 +1,8 @@
 package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.domain.category.CategoryRepository;
+import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
+import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
 import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
@@ -13,17 +15,14 @@ import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
 @Sql(scripts = {"classpath:data/data.sql"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 public class PopularProductScriptTest {

@@ -1,5 +1,7 @@
 package kr.or.connect.reservation.domain;
 
+import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
+import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.InMemoryProductDto;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RBucket;
@@ -7,15 +9,13 @@ import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
 public class RedisTest {
 
     @Autowired
