@@ -1,6 +1,5 @@
 package kr.or.connect.reservation.domain.reservation;
 
-import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
 import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
@@ -21,7 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
+@SpringBootTest(classes = {RedisConfig.class})
 @Sql(scripts = {"classpath:data/data.sql"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 class ReservationServiceBootTest {

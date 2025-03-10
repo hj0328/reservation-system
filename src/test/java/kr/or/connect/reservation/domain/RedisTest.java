@@ -1,6 +1,5 @@
 package kr.or.connect.reservation.domain;
 
-import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
 import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.InMemoryProductDto;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
+@SpringBootTest(classes = {RedisConfig.class})
 public class RedisTest {
 
     @Autowired

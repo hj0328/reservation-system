@@ -1,7 +1,6 @@
 package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.domain.category.CategoryRepository;
-import kr.or.connect.reservation.domain.config.EmbeddedRedisConfig;
 import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
@@ -22,7 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {EmbeddedRedisConfig.class, RedisConfig.class})
+@SpringBootTest(classes = {RedisConfig.class})
 @Sql(scripts = {"classpath:data/data.sql"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 public class PopularProductScriptTest {
