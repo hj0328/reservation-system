@@ -19,7 +19,7 @@ public class InMemoryProductScheduler {
 //    @Scheduled(fixedDelay = 600000)
 //    public void refreshPopularProduct() {
 //        List<PopularProductDto> popularProductDtos = productSeatScheduleRepository
-//                .findAllPopularProductRedis();
+//                .findAllPopularProducts();
 //
 //        List<InMemoryProductDto> inMemoryProductDtos = popularProductDtos.stream()
 //                .map(InMemoryProductDto::of)

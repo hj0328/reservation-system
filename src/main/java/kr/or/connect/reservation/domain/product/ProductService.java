@@ -121,17 +121,15 @@ public class ProductService {
 		return ProductSeatScheduleResponse.of(saveProductSeatSchedule, place);
 	}
 
-	public List<ProductResponse> searchProductByTitle(String title, Long productId, Long categoryId) {
-		PageRequest pageRequest = PageRequest.
-				of(productId.intValue(), PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
+	public List<ProductResponse> searchProductByTitle(String title, Long categoryId) {
 
 		List<Product> foundProductList;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			foundProductList = productRepository
-					.findByTitleStartsWith(title, pageRequest);
+					.findByTitleStartsWith(title);
 		} else {
 			foundProductList = productRepository
-					.findByTitleStartingWithAndCategoryId(title, categoryId, pageRequest);
+					.findByTitleStartingWithAndCategoryId(title, categoryId);
 		}
 
 		return foundProductList.stream()
@@ -207,35 +205,36 @@ public class ProductService {
 	 * @return
 	 */
 	public List<PopularProductResponse> getRealTimePopularProductRedis(Integer startPage, Long categoryId) {
-		// redis는 기동 시 warm up 된 상태
-		List<InMemoryProductDto> inMemoryProductDto = redisPopularProduct.getProductDtos();
+		// Redis는 기동 시 warm-up 된 상태에서 데이터를 가져옴
+		List<InMemoryProductDto> productDtos = redisPopularProduct.getProductDtos();
 
+		// 특정 카테고리 필터링 (ALL_CATEGORY와 다르면 필터 적용)
 		if (!ALL_CATEGORY.equals(categoryId)) {
 			Category category = categoryRepository.findById(categoryId)
 					.orElseThrow(() -> new CustomException(CustomExceptionStatus.CATEGORY_NOT_FOUND));
-			inMemoryProductDto = inMemoryProductDto.stream()
-					.filter(v -> v.getCategoryName().equals(category.getName().name()))
+			productDtos = productDtos.stream()
+					.filter(dto -> dto.getCategoryName().equals(category.getName().name()))
 					.collect(Collectors.toList());
 		}
 
-		int offset = startPage * PRODUCT_PAGE_SIZE;
-		int limit = PRODUCT_PAGE_SIZE;
-		int fromIndex = offset;
-		int toIndex = offset + limit;
-		int idsSize = inMemoryProductDto.size();
+		// 전체 리스트를 정렬: 여기서는 productId를 내림차순 정렬 (원하는 정렬 기준에 맞게 수정 가능)
+		List<InMemoryProductDto> sortedList = productDtos.stream()
+				.sorted(Comparator.comparing(InMemoryProductDto::getTotalReservedCount).reversed())
+				.collect(Collectors.toList());
 
-		if (offset > idsSize) {
+		// Pagination: startPage를 기반으로 오프셋과 종료 인덱스 계산
+		int offset = startPage * PRODUCT_PAGE_SIZE;
+		if (offset < 0 || offset >= sortedList.size()) {
 			return Collections.emptyList();
 		}
+		int toIndex = Math.min(offset + PRODUCT_PAGE_SIZE, sortedList.size());
 
-		if (toIndex > idsSize) {
-			toIndex = idsSize;
-		}
-
-		return inMemoryProductDto.subList(fromIndex, toIndex).stream()
+		// 해당 범위의 데이터를 PopularProductResponse로 매핑하여 반환
+		return sortedList.subList(offset, toIndex).stream()
 				.map(PopularProductResponse::of)
 				.collect(Collectors.toList());
 	}
+
 
 	// local cache 에서 조회. 없다면 db 조회 후 캐싱
 	public List<PopularProductResponse> getRealTimePopularProductLocalCache(Integer startPage, Long categoryId) {
@@ -243,18 +242,38 @@ public class ProductService {
 		if (inMemoryPopularProduct.isEmpty()) {
 			log.info("get popular product from DB");
 
-			List<InMemoryProductDto> productInMemoryProduct = productSeatScheduleRepository.findAllPopularProductInMemoryProduct();
-			inMemoryPopularProduct.refresh(productInMemoryProduct);
+			List<PopularProductDto> popularProducts = productSeatScheduleRepository.findAllPopularProducts();
+			List<InMemoryProductDto> inMemoryProductDtos = popularProducts.stream()
+					.map(v -> InMemoryProductDto.of(v))
+					.sorted(Comparator.comparing(InMemoryProductDto::getTotalReservedCount).reversed())
+					.collect(Collectors.toList());
+
+			inMemoryPopularProduct.refresh(inMemoryProductDtos);
+
+			int offset = startPage * PRODUCT_PAGE_SIZE;
+			int limit = PRODUCT_PAGE_SIZE;
+			int fromIndex = offset;
+			int toIndex = offset + limit;
+			int idsSize = inMemoryProductDtos.size();
+
+			if (offset > idsSize) {
+				return Collections.emptyList();
+			}
+
+			if (toIndex > idsSize) {
+				toIndex = idsSize;
+			}
 
 			if (ALL_CATEGORY.equals(categoryId)) {
-				return productInMemoryProduct.stream()
+				return inMemoryProductDtos.subList(fromIndex, toIndex).stream()
 						.map(PopularProductResponse::of)
 						.collect(Collectors.toList());
 			} else {
 				Category category = categoryRepository.findById(categoryId)
 						.orElseThrow(() -> new CustomException(CustomExceptionStatus.CATEGORY_NOT_FOUND));
 
-				return productInMemoryProduct.stream()
+
+				return inMemoryProductDtos.subList(fromIndex, toIndex).stream()
 						.filter(p -> p.getCategoryName().equals(category.getName().name()))
 						.map(PopularProductResponse::of)
 						.collect(Collectors.toList());

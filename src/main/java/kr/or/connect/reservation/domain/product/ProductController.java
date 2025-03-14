@@ -148,17 +148,15 @@ public class ProductController {
 
 	/**
 	 * product 검색
-	 * categoryId에 해당하는 모든 product를 최대 20개까지 검색
-	 * produdctId가 주어지면 해당 productId부터 20개를 검색
+	 * categoryId가 주어지면 해당하는 모든 product를 최대 20개까지 검색
 	 */
 	@GetMapping("/search")
 	public ResponseEntity<List<ProductResponse>> searchProducts (
 			@RequestParam String title,
-			@RequestParam(required = false, defaultValue = "0") Long categoryId,
-			@RequestParam(required = false, defaultValue = "0") Long productId) {
+			@RequestParam(required = false, defaultValue = "0") Long categoryId) {
 
 		return ResponseEntity.ok(
-				productService.searchProductByTitle(title, productId, categoryId)
+				productService.searchProductByTitle(title, categoryId)
 		);
 	}
 
