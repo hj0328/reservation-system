@@ -42,6 +42,7 @@ public class InMemoryPopularProduct {
         return subIds.stream()
                 .map(this.popularProductMap::get)
                 .map(PopularProductResponse::of)
+                .sorted(Comparator.comparing(PopularProductResponse::getTotalReservationQuantity).reversed())
                 .collect(Collectors.toList());
     }
 

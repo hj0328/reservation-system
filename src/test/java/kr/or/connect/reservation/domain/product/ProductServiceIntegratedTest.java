@@ -76,7 +76,7 @@ public class ProductServiceIntegratedTest {
         productRepository.save(product3);
 
         // when
-        List<ProductResponse> a = productService.searchProductByTitle("a", 0L, 0L);
+        List<ProductResponse> a = productService.searchProductByTitle("a", category.getId());
 
         // then
         assertThat(a.size()).isEqualTo(2);
@@ -101,7 +101,7 @@ public class ProductServiceIntegratedTest {
         productRepository.save(product3);
 
         // when
-        List<ProductResponse> a = productService.searchProductByTitle("a", 0L, category.getId());
+        List<ProductResponse> a = productService.searchProductByTitle("a", category.getId());
 
         // then
         assertThat(a.size()).isEqualTo(1);

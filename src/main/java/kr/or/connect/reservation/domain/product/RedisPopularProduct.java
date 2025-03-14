@@ -25,7 +25,7 @@ public class RedisPopularProduct {
     @PostConstruct
     public void initialize() {
         List<PopularProductDto> popularProductDtos = productSeatScheduleRepository
-                .findAllPopularProductRedis();
+                .findAllPopularProducts();
 
         List<InMemoryProductDto> productDtos = popularProductDtos.stream()
                 .map(InMemoryProductDto::of)

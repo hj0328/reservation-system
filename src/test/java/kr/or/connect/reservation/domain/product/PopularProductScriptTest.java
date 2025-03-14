@@ -51,7 +51,7 @@ public class PopularProductScriptTest {
     public void 레디스_상품_조회() {
         // when
         List<PopularProductDto> popularProductDtos = productSeatScheduleRepository
-                .findAllPopularProductRedis();
+                .findAllPopularProducts();
 
         List<InMemoryProductDto> productDtos = redisPopularProduct.getProductDtos();
 
