@@ -10,9 +10,9 @@ IDLE_PORT=$(find_idle_port)
 echo "> Health Check Start!"
 echo "> IDLE_PORT: $IDLE_PORT"
 echo "> curl -s http://localhost:$IDLE_PORT/profile "
-sleep 30
+sleep 10
 
-for RETRY_COUNT in {1..10} ; do
+for RETRY_COUNT in {1..30} ; do
   RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
@@ -32,5 +32,5 @@ for RETRY_COUNT in {1..10} ; do
   fi
 
   echo "> Health check 연결 실패. 재시도..."
-  sleep 10
+  sleep 100
 done

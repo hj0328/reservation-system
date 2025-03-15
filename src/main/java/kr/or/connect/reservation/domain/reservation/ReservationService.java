@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class ReservationService {
 
 	private final InMemoryPopularProduct inMemoryPopularProduct;
 	private final RedisPopularProduct redisPopularProduct;
+	private final EntityManager em;
 
 	@Transactional
 	public NewReservationResponse createReservation(NewReservationRequest request) {
@@ -61,7 +63,8 @@ public class ReservationService {
 		}
 
 		saveInMemoryProduct(reservation, totalReservedQuantity);
-
+//		em.flush();
+//		em.clear();
 		return NewReservationResponse.of(reservation.getId(), priceIdsResponse);
 	}
 	private Reservation makeReservation(NewReservationRequest request) {

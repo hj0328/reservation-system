@@ -12,10 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,13 +56,13 @@ class ProductServiceTest {
         product3.registerCategory(Category.createCategory(CategoryType.MUSICAL));
         products.add(product3);
 
-        PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
-        Page<Product> productPage = new PageImpl<>(products, pageRequest, products.size());
-        when(productRepository.findAll(pageRequest))
-                .thenReturn(productPage);
+        PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
+
+        when(productRepository.findAllProducts(0L, pageRequest))
+                .thenReturn(products);
 
         // when
-        List<ProductResponse> savedProducts = productService.getPagedProductsByCategoryId(0L, 0);
+        List<ProductResponse> savedProducts = productService.getPagedProductsByCategoryId(0L, 0L);
 
         // then
         List<String> list = savedProducts.stream()
@@ -94,13 +91,12 @@ class ProductServiceTest {
         product3.registerCategory(Category.createCategory(CategoryType.CLASSIC));
         products.add(product3);
 
-        PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "releaseDate"));
-        Page<Product> productPage = new PageImpl<>(products, pageRequest, products.size());
-        when(productRepository.findAllByCategoryId(1L, pageRequest))
-                .thenReturn(productPage);
+        PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
+        when(productRepository.findAllByCategoryId(1L, 1L, pageRequest))
+                .thenReturn(products);
 
         // when
-        List<ProductResponse> savedProducts = productService.getPagedProductsByCategoryId(1L, 0);
+        List<ProductResponse> savedProducts = productService.getPagedProductsByCategoryId(1L, 1L);
 
         // then
         List<String> list = savedProducts.stream()

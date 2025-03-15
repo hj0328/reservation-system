@@ -10,7 +10,6 @@ import kr.or.connect.reservation.domain.product.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,18 +41,19 @@ public class ProductService {
 
 	private final Long ALL_CATEGORY = 0L;
 
-	public List<ProductResponse> getPagedProductsByCategoryId(Long categoryId, Integer start) {
-		PageRequest pageRequest = PageRequest.of(start, PRODUCT_PAGE_SIZE
-				, Sort.by(Sort.Direction.DESC, "releaseDate"));
+	public List<ProductResponse> getPagedProductsByCategoryId(Long categoryId, Long productId) {
 
-		List<Product> products = Collections.emptyList();
+		List<Product> products;
+		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
 		if (ALL_PRODUCTS.equals(categoryId)) {
-			products = productRepository.findAll(pageRequest).getContent();
+//			products = productRepository.findAll(pageRequest).getContent();
+			products = productRepository.findAllProducts(productId, pageRequest);
 		} else {
-			products = productRepository.findAllByCategoryId(categoryId, pageRequest).getContent();
+			products = productRepository.findAllByCategoryId(productId, categoryId, pageRequest);
 		}
 		return products.stream()
 				.map(ProductResponse::of)
+				.sorted(Comparator.comparing(ProductResponse::getReleaseDate).reversed())
 				.collect(Collectors.toList());
 	}
 
@@ -76,11 +76,16 @@ public class ProductService {
 		return ProductDetailResponse.of(category, product, priceDtoList);
 	}
 
-	public List<ProductSeatScheduleResponse> getProductSeatScheduleList(Long productId) {
-		List<ProductSeatSchedule> seatScheduleList = productSeatScheduleRepository.findAllByProductId(productId);
+	public List<ProductSeatScheduleResponse> getProductSeatScheduleList(Long productId, Long productSeatScheduleId) {
+		// cursor pagination을 사용하기 때문에 0부터 시작
+		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
+		List<ProductSeatScheduleDto> seatScheduleList;
+
+		seatScheduleList = productSeatScheduleRepository
+				.findAllScheduleFromPssId(productId, productSeatScheduleId, pageRequest);
 
 		return seatScheduleList.stream()
-				.map(v -> ProductSeatScheduleResponse.of(v, v.getPlace()))
+				.map(ProductSeatScheduleResponse::of)
 				.collect(Collectors.toList());
 	}
 
