@@ -23,14 +23,14 @@ public class ProductController {
 	 * 조회 대상은 가장 최근 출시된 상품순서대로 정렬
 	 *
 	 * @param categoryId 카테고리 아이디
-	 * @param start      조회 시작 위치
+	 * @param productId      조회 시작 위치
 	 */
 	@GetMapping
 	public ResponseEntity<ProductListResponse> getProduct(
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
-			@RequestParam(required = false, defaultValue = "0") Integer start) {
+			@RequestParam(required = false, defaultValue = "0") Long productId) {
 
-		List<ProductResponse> products = productService.getPagedProductsByCategoryId(categoryId, start);
+		List<ProductResponse> products = productService.getPagedProductsByCategoryId(categoryId, productId);
 		Long productTotalCount = productService.getProductCountByCategoryId(categoryId);
 
 		ProductListResponse response = ProductListResponse.builder()
@@ -84,9 +84,10 @@ public class ProductController {
 	 */
 	@GetMapping("/schedule")
 	public ResponseEntity<ProductSeatScheduleListResponse> getProductSeatSchedule(
-			@RequestParam Long productId) {
+			@RequestParam Long productId,
+			@RequestParam(required = false, defaultValue = "0") Long productSeatScheduleId) {
 
-		List<ProductSeatScheduleResponse> scheduleListList = productService.getProductSeatScheduleList(productId);
+		List<ProductSeatScheduleResponse> scheduleListList = productService.getProductSeatScheduleList(productId, productSeatScheduleId);
 		ProductSeatScheduleListResponse resp = ProductSeatScheduleListResponse.builder()
 				.productId(productId)
 				.productSeatScheduleList(scheduleListList)
