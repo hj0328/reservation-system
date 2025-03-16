@@ -154,10 +154,11 @@ public class ProductController {
 	@GetMapping("/search")
 	public ResponseEntity<List<ProductResponse>> searchProducts (
 			@RequestParam String title,
-			@RequestParam(required = false, defaultValue = "0") Long categoryId) {
+			@RequestParam(required = false, defaultValue = "0") Long categoryId,
+			@RequestParam(required = false, defaultValue = "0") Long productId) {
 
 		return ResponseEntity.ok(
-				productService.searchProductByTitle(title, categoryId)
+				productService.searchProductByTitle(title, categoryId, productId)
 		);
 	}
 

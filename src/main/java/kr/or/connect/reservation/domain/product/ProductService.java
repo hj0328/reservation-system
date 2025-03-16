@@ -126,15 +126,16 @@ public class ProductService {
 		return ProductSeatScheduleResponse.of(saveProductSeatSchedule, place);
 	}
 
-	public List<ProductResponse> searchProductByTitle(String title, Long categoryId) {
+	public List<ProductResponse> searchProductByTitle(String title, Long categoryId, Long productId) {
+
 
 		List<Product> foundProductList;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			foundProductList = productRepository
-					.findByTitleStartsWith(title);
+					.findByTitleStartsWith(title, productId, PRODUCT_PAGE_SIZE);
 		} else {
 			foundProductList = productRepository
-					.findByTitleStartingWithAndCategoryId(title, categoryId);
+					.findByTitleStartingWithAndCategoryId(title, categoryId, productId, PRODUCT_PAGE_SIZE);
 		}
 
 		return foundProductList.stream()
