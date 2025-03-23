@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,14 +39,14 @@ public class Reservation extends BaseEntity {
     private ReservationStatus reservationStatus;
 
     @Column(name = "reserved_date")
-    private LocalDateTime reservedDate;
+    private LocalDate reservedDate;
 
-    private Reservation(ReservationStatus reservationStatus, LocalDateTime reservedDate) {
+    private Reservation(ReservationStatus reservationStatus, LocalDate reservedDate) {
         this.reservationStatus = reservationStatus;
         this.reservedDate = reservedDate;
     }
 
-    public static Reservation create(ReservationStatus reservationStatus, LocalDateTime reservedDate) {
+    public static Reservation create(ReservationStatus reservationStatus, LocalDate reservedDate) {
         return new Reservation(reservationStatus, reservedDate);
     }
 
