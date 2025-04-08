@@ -7,7 +7,7 @@
     - 기타: Git, Intellij, DBeaver, nGrinder
 
 - 아키텍처   
-<img width="100%" alt="Image" src="https://private-user-images.githubusercontent.com/24749457/431263163-f606edab-51b6-4002-8034-1e8f60d5d897.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQwOTg3MjEsIm5iZiI6MTc0NDA5ODQyMSwicGF0aCI6Ii8yNDc0OTQ1Ny80MzEyNjMxNjMtZjYwNmVkYWItNTFiNi00MDAyLTgwMzQtMWU4ZjYwZDVkODk3LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA0MDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNDA4VDA3NDcwMVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPThjMjZiMWZmYTQ2ODM3NzdlODBlZjM2ZTdlNDJlMDRhODJjOWUyM2RiMjczOTk3N2IwYjBjMTcyNzkyNjU1YjkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.Bt1axasjZigJFcOb9EzvZgGFlis1hWq_zlpq4kuT7dY" />
+<img width="100%" alt="Image" src="https://private-user-images.githubusercontent.com/24749457/431275583-b85d0ca8-697e-487d-8221-ca434f007592.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQxMDA2NDksIm5iZiI6MTc0NDEwMDM0OSwicGF0aCI6Ii8yNDc0OTQ1Ny80MzEyNzU1ODMtYjg1ZDBjYTgtNjk3ZS00ODdkLTgyMjEtY2E0MzRmMDA3NTkyLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA0MDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNDA4VDA4MTkwOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWU3YWM1YzNhYjg2YjU4YWQ5OWI5MWY1NjJjOWNhYWNiNmE2NDRlYWI4ODZkZWEwNmRlZDk0ZWEyM2ZmYTcyMGYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.PxIYniROC0wGi2HSe3BcBWurVUGHtyXcajlPG0329CY" />
 
 
 ## Postman API Docs
@@ -39,7 +39,7 @@
 
 ### 3차 개발
 - 📅 2025.03 ~ 2025.03
-- Github Action, AWS S3, CodeDeploy를 이용하여 CI/CD 적용
+- Github Action, AWS S3, CodeDeploy를 이용하여 무중단 배포
 - 통합 테스트에서 @DirtiesContext 로 인한 시간 지연을 개선하기 위해 @sql 활용, **테스트 시간 12초 → 9초 개선**
 - **vUser 100명 기준** 부하 테스트를 진행하여 성능 개선
     - **응답 시간**: 7초 → 0.3초 (**23배 개선**), **TPS** 4.5 → 87 **(19배 개선)**
