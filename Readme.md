@@ -6,13 +6,12 @@
     - 인프라: AWS EC2, RDS, Github Actions, CodeDeploy, S3
     - 기타: Git, Intellij, DBeaver, nGrinder
 
-- 아키텍처   
-<img width="100%" alt="Image" src="https://github.com/user-attachments/assets/ad3e11db-a007-43cc-a6dd-609b379d76ad" />
+- 아키텍처
+![아키텍처 ](images/screenshot.jpg)
 
 
 ## Postman API Docs
 
-![아키텍처 ](images/screenshot.jpg)
 
 - https://documenter.getpostman.com/view/15521816/2sA35A6QEr
 
