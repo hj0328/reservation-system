@@ -7,12 +7,12 @@
     - 기타: Git, Intellij, DBeaver, nGrinder
 
 - 아키텍처   
-<img width="100%" alt="Image" src="https://private-user-images.githubusercontent.com/24749457/431301874-e68aeb15-979e-4711-be44-d76655980838.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQxMDQ0NTAsIm5iZiI6MTc0NDEwNDE1MCwicGF0aCI6Ii8yNDc0OTQ1Ny80MzEzMDE4NzQtZTY4YWViMTUtOTc5ZS00NzExLWJlNDQtZDc2NjU1OTgwODM4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA0MDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNDA4VDA5MjIzMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTUwMmFlMTg4MmYzYjY4N2QzN2VmNWVkZjUzY2VjNDU2MDYwYmQ3NzI0ZjczMWNlNTgxMmQ4OTFiYzY0NzQ4M2UmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.dyHvPkaJtbn13nzhzzM78mVBjBjsD3ZBX0wnkUexisw" />
+<img width="100%" alt="Image" src="https://github.com/user-attachments/assets/ad3e11db-a007-43cc-a6dd-609b379d76ad" />
 
 
 ## Postman API Docs
 
-<img width="100%" alt="image" src="https://github.com/hj0328/Reservation-System/assets/24749457/a61f231c-c9ac-4c3d-b282-2dfb7ef329bf">
+![아키텍처 ](images/screenshot.jpg)
 
 - https://documenter.getpostman.com/view/15521816/2sA35A6QEr
 
