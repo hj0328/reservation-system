@@ -11,6 +11,7 @@
 
 
 ## Postman API Docs
+<img width="100%" alt="image" src="https://github.com/hj0328/Reservation-System/assets/24749457/a61f231c-c9ac-4c3d-b282-2dfb7ef329bf">
 
 
 - https://documenter.getpostman.com/view/15521816/2sA35A6QEr
