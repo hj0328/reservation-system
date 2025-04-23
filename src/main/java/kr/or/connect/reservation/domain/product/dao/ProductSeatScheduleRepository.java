@@ -5,9 +5,12 @@ import kr.or.connect.reservation.domain.product.dto.ProductSeatScheduleDto;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.LockModeType;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeatSchedule, Long> {
 
@@ -20,9 +23,9 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
     /*
      * 예매 시 동시성 이슈 방지
      */
-//    @Override
-//    @Lock(LockModeType.PESSIMISTIC_WRITE)
-//    Optional<ProductSeatSchedule> findById(Long id);
+    @Override
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<ProductSeatSchedule> findById(Long id);
 
     @Query("SELECT p.id AS productId, p.title AS title, p.description AS description, " +
             "p.runningTime AS runningTime, p.releaseDate AS releaseDate, p.category.name AS categoryName, " +
