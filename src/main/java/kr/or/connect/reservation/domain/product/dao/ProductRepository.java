@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.id > :productId ORDER BY p.id")
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.id > :productId ORDER BY p.id, p.releaseDate Desc, p.title")
     List<Product> findAllByCategoryId(Long productId, Long categoryId, PageRequest pageRequest);
 
     Long countByCategoryId(Long categoryId);
@@ -28,6 +28,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "LIMIT :pageSize ", nativeQuery = true)
     List<Product> findByTitleStartingWithAndCategoryId(String title, Long categoryId, Long productId, Integer pageSize);
 
-    @Query("SELECT p FROM Product p WHERE p.id > :productId ORDER BY p.id")
+    @Query("SELECT p FROM Product p WHERE p.id > :productId ORDER BY p.id, p.releaseDate Desc, p.title")
     List<Product> findAllProducts(Long productId, PageRequest pageRequest);
 }
