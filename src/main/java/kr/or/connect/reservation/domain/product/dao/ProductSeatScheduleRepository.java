@@ -17,7 +17,7 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
     @Query("SELECT pss.id, pss.eventDateTime, pss.reservedQuantity, pss.seatType, p.name AS placeName, p.street AS placeStreet, p.tel AS placeTel " +
             "FROM ProductSeatSchedule pss, Place p " +
             "WHERE pss.product.id = :productId AND pss.place.id = p.id AND pss.id > :productSeatScheduleId " +
-            "ORDER BY pss.id DESC ")
+            "ORDER BY pss.id DESC, pss.eventDateTime DESC")
     List<ProductSeatScheduleDto> findAllScheduleFromPssId(Long productId, Long productSeatScheduleId, PageRequest pageRequest);
 
     /*
@@ -33,7 +33,7 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
             "FROM Product p " +
                 "JOIN ProductSeatSchedule pss ON pss.product.id = p.id " +
             "GROUP BY p.id " +
-            "ORDER BY totalReservedCount DESC")
+            "ORDER BY totalReservedCount DESC, p.releaseDate DESC, p.title")
     List<PopularProductDto> findPagedPopularProduct(PageRequest pageRequest);
 
     /**
@@ -45,7 +45,7 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
             "FROM Product p " +
                 "JOIN ProductSeatSchedule pss ON pss.product.id = p.id " +
             "GROUP BY p.id " +
-            "ORDER BY totalReservedCount DESC")
+            "ORDER BY totalReservedCount DESC, p.releaseDate DESC")
     List<PopularProductDto> findAllPopularProducts();
 
     @Query("SELECT p.id AS productId, p.title AS title, p.description AS description, " +
@@ -54,6 +54,6 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
             "FROM ProductSeatSchedule pss left join pss.product p " +
             "WHERE p.category.id=:categoryId AND pss.reservedQuantity is not null " +
             "GROUP BY p.id " +
-            "ORDER BY totalReservedCount DESC ")
+            "ORDER BY totalReservedCount DESC, p.releaseDate DESC")
     List<PopularProductDto> findPopularProductByCategory(PageRequest pageRequest, Long categoryId);
 }
