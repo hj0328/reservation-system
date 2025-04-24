@@ -5,11 +5,13 @@ import kr.or.connect.reservation.domain.reservation.entity.Reservation;
 import kr.or.connect.reservation.domain.reservation.entity.ReservationPrice;
 import kr.or.connect.reservation.domain.reservation.entity.ReservationStatus;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@ToString
 public class MyReservationResponse {
 
     private Long productId;
@@ -31,8 +33,8 @@ public class MyReservationResponse {
 
         List<MyReservationPrice> myReservationPrices =
                 reservationPriceList.stream()
-                .map(MyReservationPrice::of)
-                .collect(Collectors.toList());
+                        .map(MyReservationPrice::of)
+                        .collect(Collectors.toList());
 
         return new MyReservationResponse(product.getId(),
                 product.getTitle(),

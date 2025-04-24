@@ -17,30 +17,30 @@ insert into category (name) values ('EXHIBITION');
 insert into category (name) values ('MUSICAL');
 
 insert into member (email, name, password) values ('JunitTester', 'JunitTester', 'JunitTester');
-
-
-insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 100, 'A', 'seoul1', '010-1111-1111');
-insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 100, 'S', 'seoul1','010-1111-1111');
-insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 100, 'R', 'seoul1','010-1111-1111');
-insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 100, 'VIP', 'seoul1','010-1111-1111');
-insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 100, 'VVIP', 'seoul1','010-1111-1111');
+insert into reservation (reservation_status, reserved_date, member_id, product_id) values ('CONFIRMED', now(), 1, 1);
 
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place2', 100, 'ALL_SAME_SEAT','seoul1', '010-1111-1111');
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'A', 'seoul1', '010-1111-1111');
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place2', 100, 'ALL_SAME_SEAT', 'seoul1','010-1111-1111');
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'S', 'seoul1','010-1111-1111');
+insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'R', 'seoul1','010-1111-1111');
+insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'VIP', 'seoul1','010-1111-1111');
+insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'VVIP', 'seoul1','010-1111-1111');
 
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place3', 100, 'S','seoul1', '010-1111-1111');
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place2', 1000, 'ALL_SAME_SEAT','seoul1', '010-1111-1111');
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place3', 100, 'R','seoul1', '010-1111-1111');
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place2', 1000, 'ALL_SAME_SEAT', 'seoul1','010-1111-1111');
+
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place3', 100, 'VIP','seoul1', '010-1111-1111');
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place3', 1000, 'S','seoul1', '010-1111-1111');
+insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place3', 1000, 'R','seoul1', '010-1111-1111');
+insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place3', 1000, 'VIP','seoul1', '010-1111-1111');
 
 
 insert into place (created_at, updated_at, name, seat_type, seat_quantity, street, tel) values ('2024-09-17', '2023-06-02', 'Mandalay Technological University', 'A', 16230, '823 Sunnyside Alley', '298-801-9317');
