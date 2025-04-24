@@ -1,7 +1,5 @@
 package kr.or.connect.reservation.domain.reservation;
 
-import kr.or.connect.reservation.config.exception.CustomException;
-import kr.or.connect.reservation.config.exception.CustomExceptionStatus;
 import kr.or.connect.reservation.domain.reservation.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,11 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Objects;
-
-import static kr.or.connect.reservation.utils.UtilConstant.MEMBER_ID;
 
 @RestController
 @RequestMapping(path = "/api/reservations")
@@ -28,13 +22,14 @@ public class ReservationController {
 	@GetMapping("/my-reservations")
 	public ResponseEntity<List<MyReservationResponse>> getReservations(
 			HttpServletRequest request,
+			@RequestParam(required = true) Long memberId,
 			@RequestParam(required = false, defaultValue = "0") Integer start) {
-		HttpSession session = request.getSession(false);
-		if (Objects.isNull(session)) {
-			throw new CustomException(CustomExceptionStatus.NO_SESSION_EXIST);
-		}
+//		HttpSession session = request.getSession(false);
+//		if (Objects.isNull(session)) {
+//			throw new CustomException(CustomExceptionStatus.NO_SESSION_EXIST);
+//		}
 
-		Long memberId = (Long) session.getAttribute(MEMBER_ID);
+//		Long memberId = (Long) session.getAttribute(MEMBER_ID);
 		return ResponseEntity.ok(reservationService.getReservation(memberId, start));
 	}
 
