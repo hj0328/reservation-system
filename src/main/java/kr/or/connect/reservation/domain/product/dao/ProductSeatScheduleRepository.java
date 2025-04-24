@@ -1,6 +1,7 @@
 package kr.or.connect.reservation.domain.product.dao;
 
 import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
+import kr.or.connect.reservation.domain.product.dao.dto.ProductProfitDto;
 import kr.or.connect.reservation.domain.product.dto.ProductSeatScheduleDto;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import org.springframework.data.domain.PageRequest;
@@ -64,4 +65,25 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
             "GROUP BY p.id " +
             "ORDER BY totalReservedCount DESC, p.releaseDate DESC")
     List<PopularProductDto> findPopularProductByCategory(PageRequest pageRequest, Long categoryId);
+
+    @Query(value = "SELECT p.product_id AS productId, " +
+            "    SUM(rp.reserved_price * rp.reserved_quantity) AS totalRevenue " +
+            "FROM product p " +
+            "JOIN product_seat_schedule pss ON p.product_id = pss.product_id " +
+            "JOIN reservation_price rp ON pss.product_seat_schedule_id = rp.product_seat_schedule_id " +
+            "GROUP BY p.product_id " +
+            "ORDER BY totalRevenue DESC ", nativeQuery = true)
+    List<ProductProfitDto> findPagedHighProfitProduct(PageRequest pageRequest);
+
+    @Query(value = "SELECT p.product_id AS productId, " +
+            "    SUM(rp.reserved_price * rp.reserved_quantity) AS totalRevenue " +
+            "FROM product p " +
+            "JOIN product_seat_schedule pss ON p.product_id = pss.product_id " +
+            "JOIN reservation_price rp ON pss.product_seat_schedule_id = rp.product_seat_schedule_id " +
+            "WHERE p.category_id = :categoryId " +
+            "GROUP BY p.product_id " +
+            "ORDER BY totalRevenue DESC ", nativeQuery = true)
+    List<ProductProfitDto> findHighProfitProductByCategory(PageRequest pageRequest, Long categoryId);
+
+
 }

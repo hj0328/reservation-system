@@ -1,5 +1,6 @@
 package kr.or.connect.reservation.domain.product;
 
+import kr.or.connect.reservation.domain.product.dao.dto.ProductProfitDto;
 import kr.or.connect.reservation.domain.product.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,14 @@ public class ProductController {
 			@RequestParam(required = false, defaultValue = "0") Integer startPage
 	) {
 		return productService.getRealTimePopularProduct(startPage, categoryId);
+	}
+
+	@GetMapping("/high-profit-products/db")
+	public List<ProductProfitDto> getRealTimeHighProfitProduct(
+			@RequestParam(required = false, defaultValue = "0") Long categoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer startPage
+	) {
+		return productService.getRealTimeHighProfitProducts(startPage, categoryId);
 	}
 
 	/**
