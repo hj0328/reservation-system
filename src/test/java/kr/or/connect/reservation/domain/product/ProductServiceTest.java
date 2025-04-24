@@ -58,7 +58,10 @@ class ProductServiceTest {
 
         PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
 
-        when(productRepository.findAllProducts(0L, pageRequest))
+//        when(productRepository.findAllProducts(0L, pageRequest))
+//                .thenReturn(products);
+
+        when(productRepository.findAllProductsTemp(0L, pageRequest))
                 .thenReturn(products);
 
         // when
@@ -92,11 +95,14 @@ class ProductServiceTest {
         products.add(product3);
 
         PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
-        when(productRepository.findAllByCategoryId(1L, 1L, pageRequest))
+//        when(productRepository.findAllByCategoryId(1L, 1L, pageRequest))
+//                .thenReturn(products);
+
+        when(productRepository.findAllByCategoryIdTemp(1L, pageRequest))
                 .thenReturn(products);
 
         // when
-        List<ProductResponse> savedProducts = productService.getPagedProductsByCategoryId(1L, 1L);
+        List<ProductResponse> savedProducts = productService.getPagedProductsByCategoryId(1L, 0L);
 
         // then
         List<String> list = savedProducts.stream()
