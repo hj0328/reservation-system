@@ -21,6 +21,13 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
             "ORDER BY pss.id DESC, pss.eventDateTime DESC ")
     List<ProductSeatScheduleDto> findAllScheduleFromPssId(Long productId, Long productSeatScheduleId, Pageable pageRequest);
 
+
+    @Query("SELECT pss.id AS id, pss.eventDateTime AS eventDateTime, pss.reservedQuantity AS reservedQuantity, pss.seatType AS seatType, p.name AS placeName, p.street AS placeStreet, p.tel AS placeTel " +
+            "FROM ProductSeatSchedule pss, Place p " +
+            "WHERE pss.product.id = :productId AND pss.place.id = p.id  " +
+            "ORDER BY pss.id DESC, pss.eventDateTime DESC ")
+    List<ProductSeatScheduleDto> findAllScheduleFromPssIdTemp(Long productId, Pageable pageRequest);
+
     /*
      * 예매 시 동시성 이슈 방지
      */
@@ -33,7 +40,7 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
             "SUM(pss.reservedQuantity) AS totalReservedCount " +
             "FROM Product p " +
                 "JOIN ProductSeatSchedule pss ON pss.product.id = p.id " +
-            "GROUP BY p.id " +
+            "GROUP BY p.id, p.title, p.description, p.runningTime, p.releaseDate, p.category.name  " +
             "ORDER BY totalReservedCount DESC, p.releaseDate DESC, p.title")
     List<PopularProductDto> findPagedPopularProduct(PageRequest pageRequest);
 
