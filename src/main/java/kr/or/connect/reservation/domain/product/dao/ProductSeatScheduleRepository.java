@@ -4,6 +4,7 @@ import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
 import kr.or.connect.reservation.domain.product.dto.ProductSeatScheduleDto;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -14,11 +15,11 @@ import java.util.Optional;
 
 public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeatSchedule, Long> {
 
-    @Query("SELECT pss.id, pss.eventDateTime, pss.reservedQuantity, pss.seatType, p.name AS placeName, p.street AS placeStreet, p.tel AS placeTel " +
+    @Query("SELECT pss.id AS id, pss.eventDateTime AS eventDateTime, pss.reservedQuantity AS reservedQuantity, pss.seatType AS seatType, p.name AS placeName, p.street AS placeStreet, p.tel AS placeTel " +
             "FROM ProductSeatSchedule pss, Place p " +
             "WHERE pss.product.id = :productId AND pss.place.id = p.id AND pss.id > :productSeatScheduleId " +
-            "ORDER BY pss.id DESC, pss.eventDateTime DESC")
-    List<ProductSeatScheduleDto> findAllScheduleFromPssId(Long productId, Long productSeatScheduleId, PageRequest pageRequest);
+            "ORDER BY pss.id DESC, pss.eventDateTime DESC ")
+    List<ProductSeatScheduleDto> findAllScheduleFromPssId(Long productId, Long productSeatScheduleId, Pageable pageRequest);
 
     /*
      * 예매 시 동시성 이슈 방지

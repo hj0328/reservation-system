@@ -2,11 +2,14 @@ package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.domain.category.CategoryRepository;
 import kr.or.connect.reservation.domain.config.RedisConfig;
+import kr.or.connect.reservation.domain.product.dao.PlaceRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductPriceRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
+import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
 import kr.or.connect.reservation.domain.product.dto.ProductPriceRequest;
 import kr.or.connect.reservation.domain.product.dto.ProductRegisterRequest;
 import kr.or.connect.reservation.domain.product.dto.ProductResponse;
+import kr.or.connect.reservation.domain.product.dto.ProductSeatScheduleResponse;
 import kr.or.connect.reservation.domain.product.entity.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +33,10 @@ public class ProductServiceIntegratedTest {
     private ProductRepository productRepository;
     @Autowired
     private ProductPriceRepository productPriceRepository;
+    @Autowired
+    private ProductSeatScheduleRepository productSeatScheduleRepository;
+    @Autowired
+    private PlaceRepository placeRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -105,5 +113,34 @@ public class ProductServiceIntegratedTest {
 
         // then
         assertThat(a.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void 제품_좌석정보_조회() throws Exception {
+        // given
+        Category category = categoryRepository.save(Category.createCategory(CategoryType.CLASSIC));
+        Product product1 = Product.create("abcd", "desc", LocalDate.now(), 120);
+        product1.registerCategory(category);
+        productRepository.save(product1);
+
+        Place place1 = Place.create(SeatType.S, 100, "place1", "street", "0000");
+        Place place2 = Place.create(SeatType.VIP, 100, "place2", "street", "1111");
+        placeRepository.save(place1);
+        placeRepository.save(place2);
+
+        ProductSeatSchedule seatSchedule1 = ProductSeatSchedule.create(product1, place1, LocalDateTime.now(), 1, SeatType.S.name());
+        ProductSeatSchedule seatSchedule2 = ProductSeatSchedule.create(product1, place2, LocalDateTime.now(), 1, SeatType.VIP.name());
+
+        productSeatScheduleRepository.save(seatSchedule1);
+        productSeatScheduleRepository.save(seatSchedule2);
+
+        // when
+        List<ProductSeatScheduleResponse> productSeatScheduleList = productService.getProductSeatScheduleList(1L, 0L);
+
+        // then
+        assertThat(productSeatScheduleList).allSatisfy(productPrice -> {
+            assertThat(productPrice.getPlaceName()).isIn("place1", "place2");
+            assertThat(productPrice.getSeatType()).isIn(SeatType.VIP.name(), SeatType.S.name());
+        });
     }
 }

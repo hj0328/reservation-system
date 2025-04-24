@@ -10,6 +10,7 @@ import kr.or.connect.reservation.domain.product.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,10 +79,8 @@ public class ProductService {
 
 	public List<ProductSeatScheduleResponse> getProductSeatScheduleList(Long productId, Long productSeatScheduleId) {
 		// cursor pagination을 사용하기 때문에 0부터 시작
-		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
-		List<ProductSeatScheduleDto> seatScheduleList;
-
-		seatScheduleList = productSeatScheduleRepository
+		Pageable pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
+		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
 				.findAllScheduleFromPssId(productId, productSeatScheduleId, pageRequest);
 
 		return seatScheduleList.stream()
