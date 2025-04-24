@@ -5,6 +5,7 @@ import kr.or.connect.reservation.config.exception.CustomExceptionStatus;
 import kr.or.connect.reservation.domain.category.CategoryRepository;
 import kr.or.connect.reservation.domain.product.dao.*;
 import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
+import kr.or.connect.reservation.domain.product.dao.dto.ProductProfitDto;
 import kr.or.connect.reservation.domain.product.dto.*;
 import kr.or.connect.reservation.domain.product.entity.*;
 import lombok.RequiredArgsConstructor;
@@ -294,4 +295,24 @@ public class ProductService {
 
 		return inMemoryPopularProduct.getProducts(startPage, PRODUCT_PAGE_SIZE);
 	}
+
+	public List<ProductProfitDto> getRealTimeHighProfitProducts(Integer startPage, Long categoryId) {
+		PageRequest pageRequest = PageRequest.of(startPage, PRODUCT_PAGE_SIZE);
+		List<ProductProfitDto> result;
+		if (ALL_CATEGORY.equals(categoryId)) {
+			result = productSeatScheduleRepository
+					.findPagedHighProfitProduct(pageRequest);
+		} else {
+			result = productSeatScheduleRepository
+					.findHighProfitProductByCategory(pageRequest, categoryId);
+		}
+
+		List<ProductProfitDto> popularProductDtos = new ArrayList<>();
+		if (result != null) {
+			popularProductDtos = result;
+		}
+
+		return result;
+	}
+
 }
