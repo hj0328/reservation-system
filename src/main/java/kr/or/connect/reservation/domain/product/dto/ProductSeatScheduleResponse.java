@@ -4,10 +4,12 @@ import kr.or.connect.reservation.domain.product.entity.Place;
 import kr.or.connect.reservation.domain.product.entity.ProductSeatSchedule;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
 public class ProductSeatScheduleResponse {
     private Long productSeatScheduleId;
     private LocalDateTime eventDateTime;
