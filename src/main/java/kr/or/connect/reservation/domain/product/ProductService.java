@@ -91,6 +91,9 @@ public class ProductService {
 		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
 				.findAllScheduleFromPssIdTemp(productId, pageRequest);
 
+		log.info("seatScheduleList size={}", seatScheduleList.size());
+		log.info("seatScheduleList first' place name={}", seatScheduleList.get(0).getPlaceName());
+
 		return seatScheduleList.stream()
 				.map(ProductSeatScheduleResponse::of)
 				.collect(Collectors.toList());
