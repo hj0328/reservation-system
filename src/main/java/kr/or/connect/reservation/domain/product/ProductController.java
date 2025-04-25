@@ -54,6 +54,10 @@ public class ProductController {
 		return productService.getRealTimePopularProduct(startPage, categoryId);
 	}
 
+	/**
+	 * 매출 높은 product 조회
+	 * categoryId가 주어지면 해당 카테고리에 대한 인기 순위 가져온다.
+	 */
 	@GetMapping("/high-profit-products/db")
 	public List<ProductProfitDto> getRealTimeHighProfitProduct(
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
