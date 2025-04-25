@@ -47,7 +47,7 @@ public class ProductService {
 
 		List<Product> products;
 //		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
-		PageRequest pageRequest = PageRequest.of((int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
+		PageRequest pageRequest = PageRequest.of(10000, PRODUCT_PAGE_SIZE);
 		if (ALL_PRODUCTS.equals(categoryId)) {
 //			products = productRepository.findAll(pageRequest).getContent();
 //			products = productRepository.findAllProducts(productId, pageRequest);
@@ -87,12 +87,11 @@ public class ProductService {
 //		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
 //				.findAllScheduleFromPssId(productId, productSeatScheduleId, pageRequest);
 
-		Pageable pageRequest = PageRequest.of((int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
+		Pageable pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
 		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
 				.findAllScheduleFromPssIdTemp(productId, pageRequest);
 
 		log.info("seatScheduleList size={}", seatScheduleList.size());
-		log.info("seatScheduleList first' place name={}", seatScheduleList.get(0).getPlaceName());
 
 		return seatScheduleList.stream()
 				.map(ProductSeatScheduleResponse::of)
