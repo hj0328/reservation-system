@@ -1,15 +1,13 @@
 package kr.or.connect.reservation.domain.product;
 
 import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@NoArgsConstructor
 @Getter @Setter @ToString
 public class InMemoryProductDto implements Serializable, Comparable<InMemoryProductDto> {
     private Long productId;
