@@ -44,7 +44,7 @@ public class PopularProductScriptTest {
     @BeforeEach
     public void setup() {
         // redis에 테스트 데이터 cache
-        redisPopularProduct.initializeWithLuaScript();
+//        redisPopularProduct.initializeWithLuaScript();
     }
 
 //    @Test
