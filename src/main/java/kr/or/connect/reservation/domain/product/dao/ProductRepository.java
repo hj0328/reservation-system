@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -52,4 +53,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId ORDER BY p.id, p.releaseDate Desc, p.title")
     List<Product> findAllByCategoryIdTemp(Long categoryId, PageRequest pageRequest);
+
+    @Query(value = "SELECT product0_.product_id, product0_.created_at, product0_.updated_at , product0_.category_id, product0_.description, product0_.release_date , product0_.running_time , product0_.title  " +
+            "FROM product product0_  " +
+            "WHERE product0_.release_date >= :startDate " +
+            "ORDER BY product0_.product_id, product0_.release_date " +
+            "LIMIT :pageSize OFFSET :i ", nativeQuery = true)
+    List<Product> findProductsAfterDateTemp(LocalDate startDate, long i, Integer pageSize);
+
+    @Query(value = "SELECT product0_.product_id, product0_.created_at, product0_.updated_at , product0_.category_id, product0_.description, product0_.release_date , product0_.running_time , product0_.title  " +
+            "FROM product product0_  " +
+            "WHERE product0_.release_date >= :startDate AND product0_.category_id = :categoryId " +
+            "ORDER BY product0_.product_id, product0_.release_date " +
+            "LIMIT :pageSize OFFSET :i ", nativeQuery = true)
+    List<Product> findProductsAfterDateByCategoryTemp(LocalDate startDate, Long categoryId, long i, Integer pageSize);
 }

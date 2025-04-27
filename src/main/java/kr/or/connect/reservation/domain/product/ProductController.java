@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -163,16 +164,25 @@ public class ProductController {
 	/**
 	 * product 검색
 	 * categoryId가 주어지면 해당하는 모든 product를 최대 20개까지 검색
+	 * productId를 cursor 로 사용
 	 */
 	@GetMapping("/search")
 	public ResponseEntity<List<ProductResponse>> searchProducts (
 			@RequestParam String title,
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
-			@RequestParam(required = false, defaultValue = "0") Long productId) {
+			@RequestParam(required = false, defaultValue = "0") Long productId,
+			@RequestParam(required = false) LocalDate startDate) {
 
-		return ResponseEntity.ok(
-				productService.searchProductByTitle(title, categoryId, productId)
-		);
+		if (startDate == null) {
+			return ResponseEntity.ok(
+					productService.searchProductByTitle(title, categoryId, productId)
+			);
+		} else {
+			return ResponseEntity.ok(
+					productService.searchProductAfterDate(startDate, categoryId, productId)
+			);
+		}
+
 	}
 
 	/**
