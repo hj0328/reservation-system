@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -315,6 +316,23 @@ public class ProductService {
 		}
 
 		return result;
+	}
+
+	public List<ProductResponse> searchProductAfterDate(LocalDate startDate, Long categoryId, Long productId) {
+		List<Product> foundProductList;
+
+		if (ALL_CATEGORY.equals(categoryId)) {
+			foundProductList = productRepository
+					.findProductsAfterDateTemp(startDate, productId, PRODUCT_PAGE_SIZE);
+		} else {
+			foundProductList = productRepository
+					.findProductsAfterDateByCategoryTemp(startDate, categoryId, productId, PRODUCT_PAGE_SIZE);
+		}
+
+		return foundProductList.stream()
+				.sorted(Comparator.comparing(Product::getId))
+				.map(ProductResponse::of)
+				.collect(Collectors.toList());
 	}
 
 }
