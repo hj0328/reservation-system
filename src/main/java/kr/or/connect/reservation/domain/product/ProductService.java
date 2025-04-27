@@ -47,7 +47,7 @@ public class ProductService {
 
 		List<Product> products;
 //		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
-		PageRequest pageRequest = PageRequest.of(10000, PRODUCT_PAGE_SIZE);
+		PageRequest pageRequest = PageRequest.of((int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
 		if (ALL_PRODUCTS.equals(categoryId)) {
 //			products = productRepository.findAll(pageRequest).getContent();
 //			products = productRepository.findAllProducts(productId, pageRequest);
