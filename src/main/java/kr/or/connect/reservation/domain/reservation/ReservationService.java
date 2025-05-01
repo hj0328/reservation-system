@@ -139,20 +139,11 @@ public class ReservationService {
 				.of(memberId, reservation.getId(), reservation.getReservationStatus());
 	}
 
-	public List<MyReservationResponse> getReservation(Long memberId, Integer start) {
+	public List<ReservationDetail> getReservation(Long memberId, Integer start) {
 		PageRequest pageRequest = PageRequest.of(start, RESERVATION_PAGE_SIZE
 				, Sort.by(Sort.Direction.DESC, "reservedDate"));
-		List<Reservation> reservations = reservationRepository.findAllByMemberId(memberId, pageRequest);
-
-		List<MyReservationResponse> response = new ArrayList<>();
-		for (Reservation reservation : reservations) {
-			Product product = reservation.getProduct();
-			List<ReservationPrice> reservationPriceList = reservation.getReservationPrice();
-
-			response.add(MyReservationResponse.of(product, reservation, reservationPriceList));
-		}
-
-		return response;
+		List<ReservationDetail> reservations = reservationRepository.findMemberReservation(memberId, pageRequest);
+		return reservations;
 	}
 
 	public ReservationWatchedResponse setReservationWatched(ReservationWatchedRequest request) {
