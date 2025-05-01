@@ -20,7 +20,7 @@ public class ReservationController {
 	 * 예약정보조회
 	 */
 	@GetMapping("/my-reservations")
-	public ResponseEntity<List<MyReservationResponse>> getReservations(
+	public List<ReservationDetail> getReservations(
 			HttpServletRequest request,
 			@RequestParam(required = true) Long memberId,
 			@RequestParam(required = false, defaultValue = "0") Integer start) {
@@ -30,7 +30,7 @@ public class ReservationController {
 //		}
 
 //		Long memberId = (Long) session.getAttribute(MEMBER_ID);
-		return ResponseEntity.ok(reservationService.getReservation(memberId, start));
+		return reservationService.getReservation(memberId, start);
 	}
 
 	/**
