@@ -137,8 +137,6 @@ public class ProductService {
 	}
 
 	public List<ProductResponse> searchProductByTitle(String title, Long categoryId, Long productId) {
-
-
 		List<Product> foundProductList;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			foundProductList = productRepository
@@ -186,7 +184,7 @@ public class ProductService {
 	}
 
 	/**
-	 * DB 에서 인기 데이터 조회
+	 * DB 에서 실시간 인기 데이터 조회
 	 *
 	 * @param startPage
 	 * @param categoryId
@@ -214,7 +212,7 @@ public class ProductService {
 	}
 
 	/**
-	 * Redis 에서 인기 데이터 조회
+	 * Redis 에서 실시간 인기 데이터 조회
 	 *
 	 * @param startPage
 	 * @param categoryId

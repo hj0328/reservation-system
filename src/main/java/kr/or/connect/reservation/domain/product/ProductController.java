@@ -3,6 +3,7 @@ package kr.or.connect.reservation.domain.product;
 import kr.or.connect.reservation.domain.product.dao.dto.ProductProfitDto;
 import kr.or.connect.reservation.domain.product.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class ProductController {
 	 * @param productId      조회 시작 위치
 	 */
 	@GetMapping
-	public ResponseEntity<ProductListResponse> getProduct(
+	public ProductListResponse getProduct(
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
 			@RequestParam(required = false, defaultValue = "0") Long productId) {
 
@@ -39,7 +40,7 @@ public class ProductController {
 				.products(products)
 				.totalProductCount(productTotalCount)
 				.build();
-		return ResponseEntity.ok(response);
+		return response;
 	}
 
 	/**
@@ -97,26 +98,23 @@ public class ProductController {
 	 * product schedule (시간, 남은 좌석) 정보 조회
 	 */
 	@GetMapping("/schedule")
-	public ResponseEntity<ProductSeatScheduleListResponse> getProductSeatSchedule(
+	public ProductSeatScheduleListResponse getProductSeatSchedule(
 			@RequestParam Long productId,
 			@RequestParam(required = false, defaultValue = "0") Long productSeatScheduleId) {
 
 		List<ProductSeatScheduleResponse> scheduleListList = productService.getProductSeatScheduleList(productId, productSeatScheduleId);
-		ProductSeatScheduleListResponse resp = ProductSeatScheduleListResponse.builder()
+		return ProductSeatScheduleListResponse.builder()
 				.productId(productId)
 				.productSeatScheduleList(scheduleListList)
 				.build();
-		return ResponseEntity.ok(resp);
 	}
 
 	/**
 	 * product 상세 조회(좌석, 가격 종류, 스케줄, 장소)
 	 */
 	@GetMapping("/detail-info")
-	public ResponseEntity<ProductDetailResponse> getProductDetailInfo(@RequestParam Long productId) {
-		return ResponseEntity.ok(
-				productService.getProductDetailInfo(productId)
-		);
+	public ProductDetailResponse getProductDetailInfo(@RequestParam Long productId) {
+		return productService.getProductDetailInfo(productId);
 	}
 
 	/**
@@ -163,26 +161,28 @@ public class ProductController {
 
 	/**
 	 * product 검색
-	 * categoryId가 주어지면 해당하는 모든 product를 최대 20개까지 검색
+	 * - startDate가 주어진다면, startDate 포함 이후에 개봉된 상품을 조회
+	 * - startDate가 없다면, title 로 시작하는 상품을 조회
+	 * categoryId가 주어지면 해당하는 모든 product를 최대 100개까지 검색
 	 * productId를 cursor 로 사용
 	 */
 	@GetMapping("/search")
-	public ResponseEntity<List<ProductResponse>> searchProducts (
-			@RequestParam String title,
+	public List<ProductResponse> searchProducts (
+			@RequestParam(required = false) String title,
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
 			@RequestParam(required = false, defaultValue = "0") Long productId,
-			@RequestParam(required = false) LocalDate startDate) {
+			@RequestParam(required = false)
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate startDate) {
 
+		List<ProductResponse> productResponses;
 		if (startDate == null) {
-			return ResponseEntity.ok(
-					productService.searchProductByTitle(title, categoryId, productId)
-			);
+			productResponses = productService.searchProductByTitle(title, categoryId, productId);
 		} else {
-			return ResponseEntity.ok(
-					productService.searchProductAfterDate(startDate, categoryId, productId)
-			);
+			productResponses = productService.searchProductAfterDate(startDate, categoryId, productId);
 		}
 
+		return productResponses;
 	}
 
 	/**
@@ -190,14 +190,11 @@ public class ProductController {
 	 * category, product
 	 */
 	@PutMapping("/{productId}")
-	public ResponseEntity<ProductResponse> updateProduct(
+	public ProductResponse updateProduct(
 			@PathVariable Long productId,
 			@RequestBody ProductRequest productRequest
 	) {
 
-		return ResponseEntity.ok(
-				productService.updateProduct(productId, productRequest)
-		);
+		return productService.updateProduct(productId, productRequest);
 	}
-
 }
