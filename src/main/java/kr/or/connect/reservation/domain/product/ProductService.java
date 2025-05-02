@@ -190,14 +190,14 @@ public class ProductService {
 	 * @param categoryId
 	 * @return
 	 */
-	public List<PopularProductResponse> getRealTimePopularProduct(Integer lastProductId, Long categoryId) {
+	public List<PopularProductResponse> getRealTimePopularProduct(Integer lastProductId, Long categoryId, Integer lastCount) {
 		List<PopularProductDto> result;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			result = productSeatScheduleRepository
-					.findPagedPopularProduct(PRODUCT_PAGE_SIZE, lastProductId);
+					.findPagedPopularProduct(PRODUCT_PAGE_SIZE, lastProductId, lastCount);
 		} else {
 			result = productSeatScheduleRepository
-					.findPopularProductByCategory(categoryId, PRODUCT_PAGE_SIZE, lastProductId);
+					.findPopularProductByCategory(categoryId, PRODUCT_PAGE_SIZE, lastProductId, lastCount);
 		}
 
 		List<PopularProductDto> popularProductDtos = new ArrayList<>();

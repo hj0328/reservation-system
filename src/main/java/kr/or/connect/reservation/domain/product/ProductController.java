@@ -51,9 +51,13 @@ public class ProductController {
 	@GetMapping("/popular-products/db")
 	public List<PopularProductResponse> getRealTimePopularProduct(
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
-			@RequestParam(required = false, defaultValue = "0") Integer lastProductId
+			@RequestParam(required = false, defaultValue = "0") Integer lastProductId,
+			@RequestParam(required = false) Integer lastCount
 	) {
-		return productService.getRealTimePopularProduct(lastProductId, categoryId);
+		if (lastCount == null) {
+			lastCount = Integer.MAX_VALUE;
+		}
+		return productService.getRealTimePopularProduct(lastProductId, categoryId, lastCount);
 	}
 
 	/**
