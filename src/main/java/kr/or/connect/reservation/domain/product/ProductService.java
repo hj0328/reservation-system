@@ -195,10 +195,10 @@ public class ProductService {
 		List<PopularProductDto> result;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			result = productSeatScheduleRepository
-					.findPagedPopularProduct(pageRequest);
+					.findPagedPopularProduct(PRODUCT_PAGE_SIZE, startPage);
 		} else {
 			result = productSeatScheduleRepository
-					.findPopularProductByCategory(pageRequest, categoryId);
+					.findPopularProductByCategory(categoryId, PRODUCT_PAGE_SIZE, startPage);
 		}
 
 		List<PopularProductDto> popularProductDtos = new ArrayList<>();
