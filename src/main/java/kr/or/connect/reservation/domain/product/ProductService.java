@@ -47,15 +47,15 @@ public class ProductService {
 	public List<ProductResponse> getPagedProductsByCategoryId(Long categoryId, Long productId) {
 
 		List<Product> products;
-//		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
-		PageRequest pageRequest = PageRequest.of((int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
+		PageRequest pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
+//		PageRequest pageRequest = PageRequest.of((int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
 		if (ALL_PRODUCTS.equals(categoryId)) {
 //			products = productRepository.findAll(pageRequest).getContent();
-//			products = productRepository.findAllProducts(productId, pageRequest);
-			products = productRepository.findAllProductsTemp(productId, pageRequest);
+			products = productRepository.findAllProducts(productId, pageRequest);
+//			products = productRepository.findAllProductsTemp(productId, pageRequest);
 		} else {
-//			products = productRepository.findAllByCategoryId(productId, categoryId, pageRequest);
-			products = productRepository.findAllByCategoryIdTemp(categoryId, pageRequest);
+			products = productRepository.findAllByCategoryId(productId, categoryId, pageRequest);
+//			products = productRepository.findAllByCategoryIdTemp(categoryId, pageRequest);
 		}
 		return products.stream()
 				.map(ProductResponse::of)
@@ -84,13 +84,13 @@ public class ProductService {
 
 	public List<ProductSeatScheduleResponse> getProductSeatScheduleList(Long productId, Long productSeatScheduleId) {
 		// cursor pagination을 사용하기 때문에 0부터 시작
-//		Pageable pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
-//		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
-//				.findAllScheduleFromPssId(productId, productSeatScheduleId, pageRequest);
-
 		Pageable pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
 		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
-				.findAllScheduleFromPssIdTemp(productId, pageRequest);
+				.findAllScheduleFromPssId(productId, productSeatScheduleId, pageRequest);
+
+//		Pageable pageRequest = PageRequest.of(0, PRODUCT_PAGE_SIZE);
+//		List<ProductSeatScheduleDto> seatScheduleList = productSeatScheduleRepository
+//				.findAllScheduleFromPssIdTemp(productId, pageRequest);
 
 		log.info("seatScheduleList size={}", seatScheduleList.size());
 
@@ -140,10 +140,10 @@ public class ProductService {
 		List<Product> foundProductList;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			foundProductList = productRepository
-					.findByTitleStartsWithTemp(title, (int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
+					.findByTitleStartsWith(title, productId, PRODUCT_PAGE_SIZE);
 		} else {
 			foundProductList = productRepository
-					.findByTitleStartingWithAndCategoryIdTemp(title, categoryId, (int) (productId * PRODUCT_PAGE_SIZE), PRODUCT_PAGE_SIZE);
+					.findByTitleStartingWithAndCategoryId(title, categoryId, productId, PRODUCT_PAGE_SIZE);
 		}
 
 		return foundProductList.stream()
