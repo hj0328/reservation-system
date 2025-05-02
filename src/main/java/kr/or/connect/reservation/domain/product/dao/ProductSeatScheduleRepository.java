@@ -109,12 +109,10 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
     )
     List<PopularProductDto> findPopularProductByCategory(Long categoryId, int limit, int offset);
 
-    @Query(value = "SELECT p.product_id AS productId, " +
-            "    SUM(rp.reserved_price * rp.reserved_quantity) AS totalRevenue " +
-            "FROM product p " +
-            "JOIN product_seat_schedule pss ON p.product_id = pss.product_id " +
+    @Query(value = "SELECT pss.product_id AS productId, SUM(rp.reserved_price * rp.reserved_quantity) AS totalRevenue " +
+            "FROM product_seat_schedule pss " +
             "JOIN reservation_price rp ON pss.product_seat_schedule_id = rp.product_seat_schedule_id " +
-            "GROUP BY p.product_id " +
+            "GROUP BY pss.product_id " +
             "ORDER BY totalRevenue DESC ", nativeQuery = true)
     List<ProductProfitDto> findPagedHighProfitProduct(PageRequest pageRequest);
 
