@@ -186,19 +186,18 @@ public class ProductService {
 	/**
 	 * DB 에서 실시간 인기 데이터 조회
 	 *
-	 * @param startPage
+	 * @param lastProductId
 	 * @param categoryId
 	 * @return
 	 */
-	public List<PopularProductResponse> getRealTimePopularProduct(Integer startPage, Long categoryId) {
-		PageRequest pageRequest = PageRequest.of(startPage, PRODUCT_PAGE_SIZE);
+	public List<PopularProductResponse> getRealTimePopularProduct(Integer lastProductId, Long categoryId) {
 		List<PopularProductDto> result;
 		if (ALL_CATEGORY.equals(categoryId)) {
 			result = productSeatScheduleRepository
-					.findPagedPopularProduct(PRODUCT_PAGE_SIZE, startPage);
+					.findPagedPopularProduct(PRODUCT_PAGE_SIZE, lastProductId);
 		} else {
 			result = productSeatScheduleRepository
-					.findPopularProductByCategory(categoryId, PRODUCT_PAGE_SIZE, startPage);
+					.findPopularProductByCategory(categoryId, PRODUCT_PAGE_SIZE, lastProductId);
 		}
 
 		List<PopularProductDto> popularProductDtos = new ArrayList<>();

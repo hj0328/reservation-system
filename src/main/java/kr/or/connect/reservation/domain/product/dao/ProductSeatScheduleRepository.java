@@ -45,26 +45,27 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
 //            "ORDER BY totalReservedCount DESC, p.releaseDate DESC, p.title")
 //    List<PopularProductDto> findPagedPopularProduct(PageRequest pageRequest);
 
-    @Query(value = "SELECT * " +
-                    "        FROM (\n" +
-                    "            SELECT\n" +
-                    "                p.product_id AS productId,\n" +
-                    "                p.title AS title,\n" +
-                    "                p.description AS description,\n" +
-                    "                p.running_time AS runningTime,\n" +
-                    "                p.release_date AS releaseDate,\n" +
-                    "                c.name AS categoryName,\n" +
-                    "                SUM(pss.reserved_quantity) AS totalReservedCount\n" +
-                    "            FROM product p\n" +
-                    "            JOIN product_seat_schedule pss ON pss.product_id = p.product_id\n" +
-                    "            JOIN category c ON p.category_id = c.category_id\n" +
-                    "            GROUP BY p.product_id, p.title, p.description, p.running_time, p.release_date, c.name\n" +
-                    "        ) t " +
-                    "        ORDER BY t.totalReservedCount DESC, t.releaseDate DESC " +
-                "           LIMIT :limit OFFSET :offset",
+    @Query(value =     "SELECT " +
+                        "    p.product_id AS productId, " +
+                        "    p.title AS title, " +
+                        "    p.description AS description, " +
+                        "    p.running_time AS runningTime, " +
+                        "    p.release_date AS releaseDate, " +
+                        "    c.name AS categoryName, " +
+                        "    t.totalReservedCount " +
+                        "FROM product p " +
+                        "JOIN category c ON p.category_id = c.category_id, " +
+                        "     (SELECT pss.product_id, SUM(pss.reserved_quantity) AS totalReservedCount " +
+                        "      FROM product_seat_schedule pss " +
+                        "      GROUP BY pss.product_id) t " +
+                        "WHERE p.product_id = t.product_id " +
+                        "  AND (t.totalReservedCount < :lastCount " +
+                        "       OR (t.totalReservedCount = :lastCount AND p.product_id < :lastProductId)) " +
+                        "ORDER BY t.totalReservedCount DESC, p.product_id DESC " +
+                        "LIMIT :limit",
             nativeQuery = true
     )
-    List<PopularProductDto> findPagedPopularProduct(int limit, int offset);
+    List<PopularProductDto> findPagedPopularProduct(int limit, int lastProductId);
 
     /**
      * in-memory 캐싱하기 위한 전체 조회
@@ -87,27 +88,27 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
 //            "ORDER BY totalReservedCount DESC, p.releaseDate DESC")
 //    List<PopularProductDto> findPopularProductByCategory(PageRequest pageRequest, Long categoryId);
 
-    @Query(value = "SELECT * " +
-            "        FROM (\n" +
-            "            SELECT\n" +
-            "                p.product_id AS productId,\n" +
-            "                p.title AS title,\n" +
-            "                p.description AS description,\n" +
-            "                p.running_time AS runningTime,\n" +
-            "                p.release_date AS releaseDate,\n" +
-            "                c.name AS categoryName,\n" +
-            "                SUM(pss.reserved_quantity) AS totalReservedCount\n" +
-            "            FROM product p\n" +
-            "            JOIN product_seat_schedule pss ON pss.product_id = p.product_id\n" +
-            "            JOIN category c ON p.category_id = c.category_id\n" +
-            "            WHERE p.category_id= :categoryId " +
-            "            GROUP BY p.product_id, p.title, p.description, p.running_time, p.release_date, c.name\n" +
-            "        ) t " +
-            "        ORDER BY t.totalReservedCount DESC, t.releaseDate DESC " +
-            "           LIMIT :limit OFFSET :offset",
+    @Query(value = "SELECT " +
+                    "    p.product_id AS productId, " +
+                    "    p.title AS title, " +
+                    "    p.description AS description, " +
+                    "    p.running_time AS runningTime, " +
+                    "    p.release_date AS releaseDate, " +
+                    "    c.name AS categoryName, " +
+                    "    t.totalReservedCount " +
+                    "FROM product p " +
+                    "JOIN category c ON p.category_id = c.category_id, " +
+                    "     (SELECT pss.product_id, SUM(pss.reserved_quantity) AS totalReservedCount " +
+                    "      FROM product_seat_schedule pss " +
+                    "      GROUP BY pss.product_id) t " +
+                    "WHERE p.category_id = :categoryId AND p.product_id = t.product_id " +
+                    "  AND (t.totalReservedCount < :lastCount " +
+                    "       OR (t.totalReservedCount = :lastCount AND p.product_id < :lastProductId)) " +
+                    "ORDER BY t.totalReservedCount DESC, p.product_id DESC " +
+                    "LIMIT :limit",
             nativeQuery = true
     )
-    List<PopularProductDto> findPopularProductByCategory(Long categoryId, int limit, int offset);
+    List<PopularProductDto> findPopularProductByCategory(Long categoryId, int limit, int lastProductId);
 
     @Query(value = "SELECT pss.product_id AS productId, SUM(rp.reserved_price * rp.reserved_quantity) AS totalRevenue " +
             "FROM product_seat_schedule pss " +

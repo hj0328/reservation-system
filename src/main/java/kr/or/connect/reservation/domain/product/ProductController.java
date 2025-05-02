@@ -51,9 +51,9 @@ public class ProductController {
 	@GetMapping("/popular-products/db")
 	public List<PopularProductResponse> getRealTimePopularProduct(
 			@RequestParam(required = false, defaultValue = "0") Long categoryId,
-			@RequestParam(required = false, defaultValue = "0") Integer startPage
+			@RequestParam(required = false, defaultValue = "0") Integer lastProductId
 	) {
-		return productService.getRealTimePopularProduct(startPage, categoryId);
+		return productService.getRealTimePopularProduct(lastProductId, categoryId);
 	}
 
 	/**
