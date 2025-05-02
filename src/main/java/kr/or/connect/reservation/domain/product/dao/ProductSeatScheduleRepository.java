@@ -65,7 +65,7 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
                         "LIMIT :limit",
             nativeQuery = true
     )
-    List<PopularProductDto> findPagedPopularProduct(int limit, int lastProductId);
+    List<PopularProductDto> findPagedPopularProduct(int limit, int lastProductId, int lastCount);
 
     /**
      * in-memory 캐싱하기 위한 전체 조회
@@ -108,7 +108,7 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
                     "LIMIT :limit",
             nativeQuery = true
     )
-    List<PopularProductDto> findPopularProductByCategory(Long categoryId, int limit, int lastProductId);
+    List<PopularProductDto> findPopularProductByCategory(Long categoryId, int limit, int lastProductId, Integer lastCount);
 
     @Query(value = "SELECT pss.product_id AS productId, SUM(rp.reserved_price * rp.reserved_quantity) AS totalRevenue " +
             "FROM product_seat_schedule pss " +
