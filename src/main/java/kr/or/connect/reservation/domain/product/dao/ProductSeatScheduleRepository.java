@@ -49,8 +49,8 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
                         "    p.product_id AS productId, " +
                         "    p.title, " +
                         "    p.description, " +
-                        "    p.running_time, " +
-                        "    p.release_date, " +
+                        "    p.running_time as runningTime, " +
+                        "    p.release_date as releaseDate, " +
                         "    c.name AS categoryName, " +
                         "    SUM(pss.reserved_quantity) AS totalReservedCount " +
                         "FROM product p " +
@@ -91,8 +91,8 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
                     "    p.product_id AS productId, " +
                     "    p.title, " +
                     "    p.description, " +
-                    "    p.running_time, " +
-                    "    p.release_date, " +
+                    "    p.running_time as runningTime, " +
+                    "    p.release_date as releaseDate, " +
                     "    c.name AS categoryName, " +
                     "    SUM(pss.reserved_quantity) AS totalReservedCount " +
                     "FROM product p " +
