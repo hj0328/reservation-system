@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static kr.or.connect.reservation.utils.UtilConstant.ALL_PRODUCTS;
@@ -218,34 +215,42 @@ public class ProductService {
 	 * @return
 	 */
 	public List<PopularProductResponse> getRealTimePopularProductRedis(Integer startPage, Long categoryId) {
-		// Redis는 기동 시 warm-up 된 상태에서 데이터를 가져옴
-		List<InMemoryProductDto> productDtos = redisPopularProduct.getProductDtos();
-
-		// 특정 카테고리 필터링 (ALL_CATEGORY와 다르면 필터 적용)
-		if (!ALL_CATEGORY.equals(categoryId)) {
+		// Redis는 기동 시 warm-up 된 상태.
+		String categoryName = null;
+		if (categoryId != 0) {
 			Category category = categoryRepository.findById(categoryId)
 					.orElseThrow(() -> new CustomException(CustomExceptionStatus.CATEGORY_NOT_FOUND));
-			productDtos = productDtos.stream()
-					.filter(dto -> dto.getCategoryName().equals(category.getName().name()))
-					.collect(Collectors.toList());
+			categoryName = category.getName().name();
 		}
+
+		List<InMemoryProductDto> productDtos = redisPopularProduct.getProductDtos(startPage, categoryName);
+		return productDtos.stream().map(PopularProductResponse::of)
+				.collect(Collectors.toList());
+		// 특정 카테고리 필터링 (ALL_CATEGORY와 다르면 필터 적용)
+//		if (!ALL_CATEGORY.equals(categoryId)) {
+//			Category category = categoryRepository.findById(categoryId)
+//					.orElseThrow(() -> new CustomException(CustomExceptionStatus.CATEGORY_NOT_FOUND));
+//			productDtos = productDtos.stream()
+//					.filter(dto -> dto.getCategoryName().equals(category.getName().name()))
+//					.collect(Collectors.toList());
+//		}
 
 		// 전체 리스트를 정렬: 여기서는 productId를 내림차순 정렬 (원하는 정렬 기준에 맞게 수정 가능)
-		List<InMemoryProductDto> sortedList = productDtos.stream()
-				.sorted(Comparator.comparing(InMemoryProductDto::getTotalReservedCount).reversed())
-				.collect(Collectors.toList());
-
-		// Pagination: startPage를 기반으로 오프셋과 종료 인덱스 계산
-		int offset = startPage * PRODUCT_PAGE_SIZE;
-		if (offset < 0 || offset >= sortedList.size()) {
-			return Collections.emptyList();
-		}
-		int toIndex = Math.min(offset + PRODUCT_PAGE_SIZE, sortedList.size());
-
-		// 해당 범위의 데이터를 PopularProductResponse로 매핑하여 반환
-		return sortedList.subList(offset, toIndex).stream()
-				.map(PopularProductResponse::of)
-				.collect(Collectors.toList());
+//		List<InMemoryProductDto> sortedList = productDtos.stream()
+//				.sorted(Comparator.comparing(InMemoryProductDto::getTotalReservedCount).reversed())
+//				.collect(Collectors.toList());
+//
+//		// Pagination: startPage를 기반으로 오프셋과 종료 인덱스 계산
+//		int offset = startPage * PRODUCT_PAGE_SIZE;
+//		if (offset < 0 || offset >= sortedList.size()) {
+//			return Collections.emptyList();
+//		}
+//		int toIndex = Math.min(offset + PRODUCT_PAGE_SIZE, sortedList.size());
+//
+//		// 해당 범위의 데이터를 PopularProductResponse로 매핑하여 반환
+//		return sortedList.subList(offset, toIndex).stream()
+//				.map(PopularProductResponse::of)
+//				.collect(Collectors.toList());
 	}
 
 
