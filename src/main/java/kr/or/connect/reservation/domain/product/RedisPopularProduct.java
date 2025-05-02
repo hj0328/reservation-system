@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static kr.or.connect.reservation.utils.UtilConstant.PRODUCT_PAGE_SIZE;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -57,6 +59,7 @@ public class RedisPopularProduct {
 
             List<Object> args = new ArrayList<>();
             for (InMemoryProductDto dto : uniqueDtos) {
+                System.out.println(dto.toString());
                 args.add(dto.getTotalReservedCount());  // score
                 args.add(objectMapper.writeValueAsString(dto)); // value: JSON 직렬화해서 저장
             }
@@ -119,6 +122,38 @@ public class RedisPopularProduct {
 
         return result;
     }
+
+    public List<InMemoryProductDto> getProductDtos(int from, String categoryName) {
+        RScoredSortedSet<String> sortedSet = redissonClient.getScoredSortedSet("popularProducts");
+
+        List<InMemoryProductDto> products = sortedSet.entryRange(from, PRODUCT_PAGE_SIZE * 2).stream()
+                .filter(entry -> {
+                    if (categoryName == null) return true;
+
+                    String json = entry.getValue();
+                    try {
+                        InMemoryProductDto dto = objectMapper.readValue(json, InMemoryProductDto.class);
+                        if (dto.getCategoryName().equals(categoryName)) return true;
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return false;
+                })
+                .map(entry -> {
+                    String json = entry.getValue();
+                    try {
+                        InMemoryProductDto dto = objectMapper.readValue(json, InMemoryProductDto.class);
+                        return dto;
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .limit(PRODUCT_PAGE_SIZE)
+                .collect(Collectors.toList());
+
+        return products;
+    }
+
 
     /**
      * Redis에 새로운 Product 등록
