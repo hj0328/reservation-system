@@ -5,6 +5,7 @@ import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
 import kr.or.connect.reservation.domain.product.dto.PopularProductResponse;
+import kr.or.connect.reservation.domain.product.dto.ProductResponse;
 import kr.or.connect.reservation.domain.product.entity.Category;
 import kr.or.connect.reservation.domain.reservation.ReservationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -133,7 +137,7 @@ public class PopularProductScriptTest {
         Category anyCategory = categories.get(0);
 
         // when
-        List<PopularProductResponse> popularProducts = productService.getRealTimePopularProduct(0, anyCategory.getId());
+        List<PopularProductResponse> popularProducts = productService.getRealTimePopularProduct(0, anyCategory.getId(), Integer.MAX_VALUE);
 
         // then
         assertThat(popularProducts).allSatisfy(p -> {
@@ -151,12 +155,12 @@ public class PopularProductScriptTest {
         productService.getPagedProductsByCategoryId(1L, 1L);
 //        productService.getProductCountByCategoryId(1L);
 
-//        productService.getPagedProductsByCategoryId(0L, 1L);
-//        productService.getProductCountByCategoryId(0L);
+        productService.getPagedProductsByCategoryId(0L, 1L);
+        productService.getProductCountByCategoryId(0L);
 
         // api/products/schedule 20ms
-//        productService.getProductSeatScheduleList(1L, 0L);
-//        productService.getProductSeatScheduleList(1L, 1L);
+        productService.getProductSeatScheduleList(1L, 0L);
+        productService.getProductSeatScheduleList(1L, 1L);
 
         // api/products/search 20ms
 //        productService.searchProductByTitle("hi", 0L, 3L);
@@ -189,4 +193,20 @@ public class PopularProductScriptTest {
 //            System.out.println(popularProduct);
 //        }
 //    }
+
+    @Test
+    public void 특정날짜_이후_제품검색() throws Exception {
+        // given
+        // when
+        List<ProductResponse> productResponses = productService.searchProductAfterDate(LocalDate.of(2020, 01, 01), 1L, 0L);
+
+        // then
+        System.out.println(productResponses.size());
+        HashSet<String> set = new HashSet<>();
+        productResponses.stream()
+                .map(v -> set.add(v.getCategory()))
+                .collect(Collectors.toList());
+
+        assertThat(set.size()).isEqualTo(1);
+    }
 }
