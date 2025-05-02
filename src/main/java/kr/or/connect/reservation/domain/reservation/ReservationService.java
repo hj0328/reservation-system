@@ -19,7 +19,6 @@ import kr.or.connect.reservation.domain.reservation.entity.ReservationPrice;
 import kr.or.connect.reservation.domain.reservation.entity.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,8 +139,7 @@ public class ReservationService {
 	}
 
 	public List<ReservationDetail> getReservation(Long memberId, Integer start) {
-		PageRequest pageRequest = PageRequest.of(start, RESERVATION_PAGE_SIZE
-				, Sort.by(Sort.Direction.DESC, "reservedDate"));
+		PageRequest pageRequest = PageRequest.of(start, RESERVATION_PAGE_SIZE);
 		List<ReservationDetail> reservations = reservationRepository.findMemberReservation(memberId, pageRequest);
 		return reservations;
 	}
