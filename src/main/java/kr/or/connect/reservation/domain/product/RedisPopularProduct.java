@@ -125,28 +125,19 @@ public class RedisPopularProduct {
     public List<InMemoryProductDto> getProductDtos(int from, String categoryName) {
         RScoredSortedSet<String> sortedSet = redissonClient.getScoredSortedSet("popularProducts");
 
-        List<InMemoryProductDto> products = sortedSet.entryRange(from, PRODUCT_PAGE_SIZE * 2).stream()
-                .filter(entry -> {
-                    if (categoryName == null) return true;
-
-                    String json = entry.getValue();
-                    try {
-                        InMemoryProductDto dto = objectMapper.readValue(json, InMemoryProductDto.class);
-                        if (dto.getCategoryName().equals(categoryName)) return true;
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return false;
-                })
+        int to = from + PRODUCT_PAGE_SIZE * 2 - 1;
+        List<InMemoryProductDto> products = sortedSet.entryRange(from, to).stream()
                 .map(entry -> {
-                    String json = entry.getValue();
                     try {
+                        String json = entry.getValue();
                         InMemoryProductDto dto = objectMapper.readValue(json, InMemoryProductDto.class);
                         return dto;
                     } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
+                        log.error("Json 데이터 파싱 에러 발생, {}", e.getStackTrace()[0]);
+                        return null;
                     }
                 })
+                .filter(pair -> categoryName == null || pair.getCategoryName().equals(categoryName))
                 .limit(PRODUCT_PAGE_SIZE)
                 .collect(Collectors.toList());
 
