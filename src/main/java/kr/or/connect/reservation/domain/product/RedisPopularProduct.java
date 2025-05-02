@@ -59,7 +59,6 @@ public class RedisPopularProduct {
 
             List<Object> args = new ArrayList<>();
             for (InMemoryProductDto dto : uniqueDtos) {
-                System.out.println(dto.toString());
                 args.add(dto.getTotalReservedCount());  // score
                 args.add(objectMapper.writeValueAsString(dto)); // value: JSON 직렬화해서 저장
             }
