@@ -1,9 +1,9 @@
 # 예약 시스템
-- 예약 서비스 성능 최적화 개인 프로젝트
+- 영화, 뮤지컬, 클래식 공연 등의 좌석 예약 서비스를 제공하는 웹 애플리케이션
 - 성능 병목 분석부터 인프라 구성까지 전반을 다루며 3단계에 걸쳐 점진적으로 개선
 - SKILL
-    - 개발: Spring Boot, Spring Data JPA, JPA, JUnit5, MariaDB, H2, Embedded Redis
-    - 인프라: AWS EC2, RDS, Github Actions, CodeDeploy, S3
+    - 개발: Spring Boot, JPA, JUnit5, MariaDB, H2, Redis
+    - 인프라: AWS EC2, AWS RDS, AWS CodeDeploy, AWS S3
     - 기타: Git, Intellij, DBeaver, nGrinder
 
 - 아키텍처
@@ -17,43 +17,27 @@
 - https://documenter.getpostman.com/view/15521816/2sA35A6QEr
 
 ### 1차 개발
-- 📅 2023.05 ~ 2023.07
-- 예약 시스템 기본 CRUD 개발
-- Spring → Spring Boot (4.3 → 2.7)
-  - 배포 파일 형식을 WAR에서 JAR로 변경하며 JSP 파일이 실행하지 못하는 호환성 문제 발생
-  - JSP를 Thymeleaf로 변경하여, JAR 배포 형식으로 변경
+- Spring Framework 기반으로 진행하며, 직접 Configuration 클래스를 통해 Bean 간의 관계를 설정함으로써 DI 대한 이해 
+- 외부 Tomcat 환경에서 리소스 반영 지연 및 기동 오류를 경험하여, 더 안정적인 배포 환경을 위해 Spring Boot로 전환,  Spring → Spring Boot (4.3 → 2.7)
 
 ### 2차 개발
-- 📅 2024.02 ~ 2024.03
 - 반복 SQL문과 변경이 잦은 설계로 인해 JdbcTemplate에서 JPA로 변경
 - 이상 현상 방지를 위해 ERD 재설계
     - 관람 좌석 등급 기능을 추가하며 관람 장소 좌석 테이블의 N:M 관계를 1:N 관계를 분리
 - 인기 예약 상품 조회에 Local Cache(Thread Safe 자료구조)를 통해 API 응답속도 85% 향상
-    - **90ms 에서 15ms 로 향상**
-    - 1만 건의 목 데이터 생성을 통해 테스트 진행
 - 100건 동시 예약 요청에서도 데이터 무결성을 보장하도록 동시성 제어
   - synchronized로 한 스레드씩 처리하려 했지만,
   - JPA는 flush와 커밋 타이밍이 분리되어 WAS의 동기화와 DB 반영 시점이 일치하지 않는 경우 발생 (100건 중 약 94건 통과)
   - **필요한 데이터에만 동시성 문제를 세밀하게 제어하기 위해 Pessimistic Lock 적용하여 동시성 제어**
 
 ### 3차 개발
-- 📅 2025.03 ~ 2025.03
-- Github Action, AWS S3, CodeDeploy를 이용하여 무중단 배포
+- Github Action + AWS S3 + CodeDeploy 환경으로 CI/CD 무중단 배포 도입
 - 통합 테스트에서 @DirtiesContext 로 인한 시간 지연을 개선하기 위해 @sql 활용, **테스트 시간 12초 → 9초 개선**
 - **vUser 100명 기준** 부하 테스트를 진행하여 성능 개선
-    - **응답 시간**: 7초 → 0.3초 (**23배 개선**), **TPS** 4.5 → 87 **(19배 개선)**
     - 2Core, 4GB 사양의 AWS EC2, RDS 서버에서 **100만건 더미 데이터 활용**
-1. DB 병목현상으로 인해 DB Connection Pool 최적화 및 쿼리 튜닝
-    - 조건절에 Index 컬럼 사용만으로 충분할 것으로 예상했으나 filesort로 인해 DB 부하 발생
-    - Offset 방식으로 랜덤 페이지 조회 시, index 값이 높을수록 응답 시간이 증가하는 현상이 발생
-    - Covering Index, Cursor Based Pagination, Connection Pool 설정하여 최적화
-        - 응답 시간: 7초 → 3.7초, TPS: 4.5 → 12.9
-        - **DB CPU 100% → 90% 개선 | 메모리 100% → 30% 유지**
-2. Redis 캐시를 도입하여 잔여 DB 병목 현상 개선
-    - 기존의 Local Cache 대신, Scale-Out 한다면 데이터 일관성을 고려하여 Redis 선택
-        - 응답 시간: 3.7초 → 0.3초, TPS: 12.9 → 87.8
-        - **DB CPU 90% → 6.8% 유지 | 메모리 30% 유지**
-
+    - **TPS 1.7 → 27.6 약 23배 증가**
+      - **cursor 기반 페이징 및 커버링 인덱스, redis 등을 도입하여 db 부하 감소 및 성능 최적화**
+    - Redis Warm-up 지연 원인을 Redisson addAll() 호출 방식에서 찾아, Lua Script를 활용한 일괄 삽입 방식으로 성능 병목을 해결(22분 → 12초)
 <!--
 ## ERD 
 <img width="100%" alt="image" src="https://github.com/hj0328/Reservation-System/assets/24749457/9786e870-79dc-4f4a-b0c0-540bce13f24e">
