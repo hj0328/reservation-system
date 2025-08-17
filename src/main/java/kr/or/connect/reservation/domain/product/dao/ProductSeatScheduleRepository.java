@@ -36,6 +36,8 @@ public interface ProductSeatScheduleRepository extends JpaRepository<ProductSeat
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<ProductSeatSchedule> findById(Long id);
 
+    Optional<ProductSeatSchedule> findProductSeatById(Long id);
+
 //    @Query("SELECT p.id AS productId, p.title AS title, p.description AS description, " +
 //            "p.runningTime AS runningTime, p.releaseDate AS releaseDate, p.category.name AS categoryName, " +
 //            "SUM(pss.reservedQuantity) AS totalReservedCount " +
