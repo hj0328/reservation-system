@@ -4,6 +4,7 @@ import kr.or.connect.reservation.domain.category.CategoryRepository;
 import kr.or.connect.reservation.domain.config.RedisConfig;
 import kr.or.connect.reservation.domain.product.dao.ProductRepository;
 import kr.or.connect.reservation.domain.product.dao.ProductSeatScheduleRepository;
+import kr.or.connect.reservation.domain.product.dao.dto.PopularProductDto;
 import kr.or.connect.reservation.domain.product.dto.PopularProductResponse;
 import kr.or.connect.reservation.domain.product.dto.ProductResponse;
 import kr.or.connect.reservation.domain.product.entity.Category;
@@ -48,7 +49,7 @@ public class PopularProductScriptTest {
     @BeforeEach
     public void setup() {
         // redis에 테스트 데이터 cache
-//        redisPopularProduct.initializeWithLuaScript();
+        redisPopularProduct.initializeWithLuaScript();
     }
 
 //    @Test
@@ -60,17 +61,18 @@ public class PopularProductScriptTest {
 //        }
 //    }
 //
-//    @Test
-//    public void 레디스_상품_조회() {
-//        // when
-//        List<PopularProductDto> popularProductDtos = productSeatScheduleRepository
-//                .findAllPopularProducts();
-//
+    @Test
+    public void 레디스_상품_조회() {
+        // when
+
+        List<PopularProductDto> popularProductDtos = productSeatScheduleRepository
+                .findAllPopularProducts();
+
 //        List<InMemoryProductDto> productDtos = redisPopularProduct.getProductDtos();
-//
-//        // then
+
+        // then
 //        assertThat(productDtos.size()).isEqualTo(popularProductDtos.size());
-//    }
+    }
 //
 //    @Test
 //    public void 레디스_동일제품_등록_방지() {

@@ -12,6 +12,7 @@ import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RScript;
 import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -59,19 +60,14 @@ public class RedisPopularProduct {
 
             List<Object> args = new ArrayList<>();
             for (InMemoryProductDto dto : uniqueDtos) {
-                args.add(dto.getTotalReservedCount());  // score
+                args.add(String.valueOf(dto.getTotalReservedCount()));  // score
                 args.add(objectMapper.writeValueAsString(dto)); // value: JSON 직렬화해서 저장
             }
 
 
-            RScript script = redissonClient.getScript();
-            script.eval(
-                    RScript.Mode.READ_WRITE,
-                    luaScript,
-                    RScript.ReturnType.VALUE,
-                    Collections.singletonList(redisKey),
-                    args.toArray()
-            );
+            RScript script = redissonClient.getScript(StringCodec.INSTANCE);
+            script.eval(RScript.Mode.READ_WRITE, luaScript, RScript.ReturnType.STATUS,
+                    Collections.singletonList(redisKey), args.toArray());
 
             log.info("Redis Lua Script Popular Product Size={}", uniqueDtos.size());
 

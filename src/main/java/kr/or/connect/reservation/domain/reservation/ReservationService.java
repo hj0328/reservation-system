@@ -18,11 +18,14 @@ import kr.or.connect.reservation.domain.reservation.entity.Reservation;
 import kr.or.connect.reservation.domain.reservation.entity.ReservationPrice;
 import kr.or.connect.reservation.domain.reservation.entity.ReservationStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +33,8 @@ import static kr.or.connect.reservation.utils.UtilConstant.RESERVATION_PAGE_SIZE
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
+@Slf4j
 public class ReservationService {
 
 //	private final ReservationDao reservationDao;
@@ -45,8 +49,21 @@ public class ReservationService {
 	private final RedisPopularProduct redisPopularProduct;
 	private final EntityManager em;
 
-	@Transactional
+	private final RedissonClient redissonClient;
+
+	private static final long DEDEUPE_TTL_SEC = 3;
+
+	@Transactional(readOnly = false)
 	public NewReservationResponse createReservation(NewReservationRequest request) {
+
+		String key = request.getMemberId() + ":" + request.getProductId();
+		boolean isFirst = redissonClient.getBucket(key)
+				.setIfAbsent("1", Duration.ofSeconds(DEDEUPE_TTL_SEC));
+
+		if (!isFirst) {
+			throw new IllegalArgumentException("중복 요청 입니다.");
+		}
+
 		Reservation reservation = makeReservation(request);
 
 		List<ReservationPriceDto> reservationPriceDtos = request.getReservationPriceDtos();
