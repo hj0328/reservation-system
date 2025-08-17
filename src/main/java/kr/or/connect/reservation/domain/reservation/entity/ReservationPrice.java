@@ -51,7 +51,7 @@ public class ReservationPrice extends BaseEntity {
 
     public static ReservationPrice create(Integer reservedQuantity, Integer reservedPrice, String reservedSeatType) {
         if (Arrays.stream(SeatType.values()).noneMatch(v -> v.name().equals(reservedSeatType))) {
-            throw new CustomException(CustomExceptionStatus.NO_EXIST_SEAT_TYPE);
+            throw new CustomException(CustomExceptionStatus.NO_SEAT_AVAILABLE);
         }
 
         return new ReservationPrice(null, null,

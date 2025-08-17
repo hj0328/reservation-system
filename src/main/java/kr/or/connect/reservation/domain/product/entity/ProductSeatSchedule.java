@@ -68,7 +68,7 @@ public class ProductSeatSchedule extends BaseEntity {
                                              String seatType) {
         if (Arrays.stream(SeatType.values())
                 .noneMatch(v -> v.name().equals(seatType))) {
-            throw new CustomException(CustomExceptionStatus.NO_EXIST_SEAT_TYPE);
+            throw new CustomException(CustomExceptionStatus.NO_SEAT_AVAILABLE);
         }
 
         return new ProductSeatSchedule(null, product, place, eventDateTime
