@@ -199,3 +199,34 @@ insert into member (created_at, updated_at, name, email, password) values ('2023
 insert into member (created_at, updated_at, name, email, password) values ('2024-11-11', '2024-10-14', 'Bertie', 'bfidele5h@bravesites.com', 'pZ6GW~gs,Q~IAP');
 insert into member (created_at, updated_at, name, email, password) values ('2024-05-22', '2024-07-12', 'Earl', 'eockendon5i@instagram.com', 'mG1V*\GF_V''59');
 insert into member (created_at, updated_at, name, email, password) values ('2023-09-25', '2023-04-14', 'Kanya', 'kclementucci5j@intel.com', 'fL09)t=H');
+
+
+
+-- 실행마다 고유한 이메일을 위해 run 토큰 생성 (중복/UNIQUE 충돌 방지)
+SET @run := DATE_FORMAT(NOW(), '%Y%m%d%H%i%S');
+
+INSERT INTO member (created_at, updated_at, name, email, password)
+SELECT
+  '2023-03-13 00:00:00',
+  '2024-02-19 00:00:00',
+  CONCAT('TestUser', LPAD(n, 5, '0')),
+  CONCAT('user', LPAD(n, 5, '0'), '_', @run, '@test.com'),
+  'password123'
+FROM (
+  SELECT (a.v*1000 + b.v*100 + c.v*10 + d.v) + 1 AS n
+  FROM
+    (SELECT 0 v UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+  CROSS JOIN
+    (SELECT 0 v UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
+  CROSS JOIN
+    (SELECT 0 v UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c
+  CROSS JOIN
+    (SELECT 0 v UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) d
+) AS t(n);
+
+
+

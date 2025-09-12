@@ -38,7 +38,7 @@ public class ReservationController {
 	 */
 	@PostMapping
 	public ResponseEntity<NewReservationResponse> createReservation (
-			@RequestBody NewReservationRequest request) {
+			@RequestBody NewReservationRequest request) throws InterruptedException {
 		NewReservationResponse reservation = reservationService.createReservation(request);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)

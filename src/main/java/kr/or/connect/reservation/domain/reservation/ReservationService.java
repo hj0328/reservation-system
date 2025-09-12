@@ -19,6 +19,7 @@ import kr.or.connect.reservation.domain.reservation.entity.ReservationPrice;
 import kr.or.connect.reservation.domain.reservation.entity.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import javax.persistence.EntityManager;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static kr.or.connect.reservation.utils.UtilConstant.RESERVATION_PAGE_SIZE;
 
@@ -52,37 +54,70 @@ public class ReservationService {
 	private final RedissonClient redissonClient;
 
 	private static final long DEDEUPE_TTL_SEC = 3;
+	private static final long LOCK_WAIT_MS    = 1000;
+	private static final long LOCK_LEASE_MS   = 3000;
 
 	@Transactional(readOnly = false)
-	public NewReservationResponse createReservation(NewReservationRequest request) {
+	public NewReservationResponse createReservation(NewReservationRequest request) throws InterruptedException {
 
+		// 중복 요청 방지
 		String key = request.getMemberId() + ":" + request.getProductId();
 		boolean isFirst = redissonClient.getBucket(key)
 				.setIfAbsent("1", Duration.ofSeconds(DEDEUPE_TTL_SEC));
-
 		if (!isFirst) {
-			throw new IllegalArgumentException("중복 요청 입니다.");
+			throw new CustomException(CustomExceptionStatus.DUPLICATE_MEMBER_EMAIL);
 		}
 
-		Reservation reservation = makeReservation(request);
-
-		List<ReservationPriceDto> reservationPriceDtos = request.getReservationPriceDtos();
-		List<Long> priceIdsResponse = new ArrayList<>();
-		Integer totalReservedQuantity = 0;
-		for (ReservationPriceDto reservationPriceDto : reservationPriceDtos) {
-			ReservationPrice reservationPrice = makeReservationPrice(reservationPriceDto, reservation);
-
-			calculateQuantity(reservationPriceDto, reservationPrice);
-
-			priceIdsResponse.add(reservationPrice.getId());
-			totalReservedQuantity += reservationPrice.getReservedQuantity();
+		List<ReservationPriceDto> list = request.getReservationPriceDtos();
+		if (list == null || list.isEmpty()) {
+			throw new CustomException(CustomExceptionStatus.INVALID_REQUEST_ERROR);
 		}
 
-		saveInMemoryProduct(reservation, totalReservedQuantity);
-//		em.flush();
-//		em.clear();
-		return NewReservationResponse.of(reservation.getId(), priceIdsResponse);
+		// 예약 상태 확인
+		Long productId = request.getProductId();
+		Long placeId   = list.get(0).getPlaceId();
+		String seatType = list.get(0).getSeatType();
+		Long memberId = request.getMemberId();
+
+		String lockKey = "lock:productId:" + productId + ":placeId:" + placeId + "seatType:" + seatType;
+		RLock lock = redissonClient.getLock(lockKey);
+
+		boolean acquired;
+		try {
+			acquired = lock.tryLock(LOCK_WAIT_MS, LOCK_LEASE_MS, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+			throw new CustomException(CustomExceptionStatus.RESERVATION_TOO_MANY_REQUESTS);
+		}
+
+		if (!acquired) {
+			throw new CustomException(CustomExceptionStatus.RESERVATION_TOO_MANY_REQUESTS);
+		}
+
+		try {
+			// 락 획득 처리
+			Reservation reservation = makeReservation(request);
+
+			List<Long> priceIds = new ArrayList<>();
+			int total = 0;
+			for (ReservationPriceDto dto : list) {
+				ReservationPrice rp = makeReservationPrice(dto, reservation);
+				calculateQuantity(dto, rp);
+				priceIds.add(rp.getId());
+				total += rp.getReservedQuantity();
+			}
+
+			saveInMemoryProduct(reservation, total);
+			return NewReservationResponse.of(reservation.getId(), priceIds);
+
+		} catch (org.springframework.dao.DataIntegrityViolationException e) {
+			throw new CustomException(CustomExceptionStatus.DUPLICATE_RESERVATION);
+		} finally {
+			if (lock.isHeldByCurrentThread()) lock.unlock();
+			// dedupeKey는 TTL로 자연 만료 (성공 직후 재시도 허용하고 싶으면 여기서 delete 가능)
+		}
 	}
+
 	private Reservation makeReservation(NewReservationRequest request) {
 		Reservation reservation = Reservation.create(ReservationStatus.RESERVED, request.getReservedDate());
 

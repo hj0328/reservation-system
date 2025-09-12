@@ -20,7 +20,7 @@ insert into member (email, name, password) values ('JunitTester', 'JunitTester',
 insert into reservation (reservation_status, reserved_date, member_id, product_id) values ('CONFIRMED', now(), 1, 1);
 
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
-values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'A', 'seoul1', '010-1111-1111');
+values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 10000, 'A', 'seoul1', '010-1111-1111');
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
 values ('2023-12-05 18:32:53', '2023-11-13 15:18:49', 'place1', 1000, 'S', 'seoul1','010-1111-1111');
 insert into place (created_at, updated_at, name, seat_quantity, seat_type, street, tel)
