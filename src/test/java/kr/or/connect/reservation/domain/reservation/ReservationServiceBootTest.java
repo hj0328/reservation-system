@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SpringBootTest(classes = {RedisConfig.class})
+//@Transactional
 @Sql(scripts = {"classpath:data/data.sql", "classpath:data/member-data.sql"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)    // h2에 추가한 sql 초기화
 class ReservationServiceBootTest {
@@ -33,7 +34,7 @@ class ReservationServiceBootTest {
     @Test
     public void 예약_100개_동시_처리() throws Exception {
         // given
-        int threadCount = 100;
+        int threadCount = 10000;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
 
         Queue<NewReservationRequest> queue = new ConcurrentLinkedQueue<>();
@@ -43,7 +44,7 @@ class ReservationServiceBootTest {
                     .price(10)
                     .quantity(1)
                     .seatType(SeatType.S.name())
-                    .placeId(31)
+                    .placeId(1)
                     .build();
             List<ReservationPriceDto> list1 = new ArrayList<>();
             list1.add(price);
@@ -68,7 +69,7 @@ class ReservationServiceBootTest {
                         reservationService.createReservation(req);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getStackTrace()[0]);
                 } finally {
                     latch.countDown();
                 }
@@ -79,7 +80,7 @@ class ReservationServiceBootTest {
 
         // then
         ProductSeatSchedule ret = productSeatScheduleRepository.findProductSeatById(1L).get();
-        Assertions.assertThat(ret.getReservedQuantity()).isEqualTo(100);
+        Assertions.assertThat(ret.getReservedQuantity()).isEqualTo(threadCount);
     }
 
     @Test
@@ -101,7 +102,7 @@ class ReservationServiceBootTest {
             list1.add(price);
 
             NewReservationRequest reservationRequest = NewReservationRequest.builder()
-                    .memberId(101L)
+                    .memberId(1001L)
                     .productId(1L)
                     .reservationPriceDtos(list1)
                     .build();

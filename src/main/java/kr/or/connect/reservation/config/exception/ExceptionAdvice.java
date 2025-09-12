@@ -8,25 +8,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class ExceptionAdvice {
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<?> handleBusiness(CustomException ex, HttpServletRequest req) {
-        CustomExceptionStatus s = ex.getCustomExceptionStatus();
-        Map<String, Object> body = Map.of(
-                "code", s.getCode(),
-                "message", s.getMessage(),
-                "status", s.getHttpStatus().value(),
-                "path", req.getRequestURI()
-        );
-        return ResponseEntity.status(s.getHttpStatus()).body(body);
-    }
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> bindingExceptionHandle(BindException e) {
@@ -45,6 +32,4 @@ public class ExceptionAdvice {
     public CustomExceptionStatus exHandle(CustomException e) {
         return e.getCustomExceptionStatus();
     }
-
-
 }
